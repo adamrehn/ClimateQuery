@@ -1,0 +1,16 @@
+{
+	"compilerOptions": {
+		"target": "ES6",
+		"module": "CommonJS",
+		"lib": ["ES6", "DOM"],
+		"sourceMap": true,
+		"strict": true,
+		"strictNullChecks": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"alwaysStrict": true,
+		"moduleResolution": "Node",
+		"rootDir": "./source/ts",
+		"outDir": "./source/js"
+	}
+}

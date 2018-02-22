@@ -1,0 +1,35 @@
+#building-dataset
+{
+	background-color: #fff;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+}
+
+#building-dataset p, #building-dataset div
+{
+	font-size: 1.5em;
+	text-align: center;
+	flex-shrink: 1;
+	flex-grow: 0;
+	padding: 0.5em;
+}
+
+#building-dataset div {
+	padding: 0;
+}
+
+#building-dataset .loading-icon {
+	padding-bottom: 3em;
+}
+
+#building-dataset p progress
+{
+	box-sizing: border-box;
+	min-width: 30em;
+}
+
+#building-dataset p.button-wrapper {
+	padding-top: 2em;
+}

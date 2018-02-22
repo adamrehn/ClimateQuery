@@ -1,0 +1,13 @@
+#query-form .query-sql
+{
+	font-size: 1.25em;
+	padding-bottom: 2em;
+}
+
+#query-form section .add-button-wrapper {
+	padding: 0.5em 0;
+}
+
+#query-form section button.remove {
+	margin-left: 0.75em;
+}

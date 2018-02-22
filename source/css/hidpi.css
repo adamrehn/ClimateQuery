@@ -1,0 +1,18 @@
+/* Media query from <https://gist.github.com/marcedwards/3446599> */
+@media only screen and (-webkit-min-device-pixel-ratio: 1.3),
+only screen and (-o-min-device-pixel-ratio: 13/10),
+only screen and (min-resolution: 120dpi)
+{
+	/* On high-DPI screens, use a lighter font weight */
+	html, body, div, p, li, td, th, button, input[type="month"]::-webkit-datetime-edit {
+		font-weight: 200;
+	}
+	
+	#dataset-list ul.datasets li span {
+		font-weight: 300;
+	}
+	
+	#dataset-list ul.datasets li .details span.name {
+		font-weight: 200;
+	}
+}

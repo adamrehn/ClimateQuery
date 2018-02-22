@@ -1,0 +1,119 @@
+#dataset-list ul.datasets, #dataset-list ul.datasets li
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+#dataset-list ul.datasets li
+{
+	padding: 1em;
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	position: relative;
+	clear: both;
+}
+
+#dataset-list ul.datasets li span {
+	font-weight: 400;
+}
+
+#dataset-list ul.datasets li .details
+{
+	flex-shrink: 1;
+	flex-grow: 1;
+}
+
+#dataset-list ul.datasets li .details span
+{
+	font-size: 0.9em;
+	line-height: 1.5em;
+	display: block;
+	color: rgba(0,0,0,0.5);
+}
+
+#dataset-list ul.datasets li .details span.name
+{
+	padding-bottom: 0.5em;
+	font-weight: 300;
+	line-height: 1em;
+	font-size: 1.5em;
+	color: #00aeef;
+}
+
+#dataset-list ul.datasets li .details span.present
+{
+	text-align: right;
+	float: right;
+}
+
+#dataset-list ul.datasets li .details span.validation-passed {
+	color: green;
+}
+
+#dataset-list ul.datasets li .details span.validation-warning {
+	color: red;
+}
+
+#dataset-list ul.datasets li .details span.warning-icon
+{
+	display: inline-block;
+	padding-right: 0.75em;
+	font-size: 1.25em;
+	color: #000;
+}
+
+#dataset-list ul.datasets li .actions
+{
+	background-color: rgba(0,0,0,0.5);
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
+	
+	display: none;
+	flex-shrink: 1;
+	flex-grow: 0;
+}
+
+#dataset-list ul.datasets li:hover .actions
+{
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+#dataset-list ul.datasets li .actions button
+{
+	display: inline-block;
+	margin: 0 0.5em;
+}
+
+#dataset-list ul.datasets li:nth-child(odd) {
+	background-color: #f7f7f7;
+}
+
+#dataset-list ul.datasets li:nth-child(even) {
+	background-color: #f0f0f0;
+}
+
+#dataset-list .no-datasets
+{
+	color: #00aeef;
+	text-align: center;
+	font-size: 1.5em;
+	display: flex;
+	width: 100%;
+	height: 100%;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+}
+
+#dataset-list .no-datasets p {
+	margin: 0.25em 0;
+}

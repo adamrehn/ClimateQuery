@@ -1,0 +1,436 @@
+@import url('./ball-fall.min.css');
+
+html, body, *
+{
+	user-select: none;
+	cursor: default;
+	margin: 0;
+}
+
+html, body {
+	height: 100%;	
+}
+
+html, body, div, p, li, td, th, button, input[type="month"]::-webkit-datetime-edit
+{
+	/* Fallback system font stack from GitHub, found here: <https://css-tricks.com/snippets/css/system-font-stack/> */
+	font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+	font-weight: 300;
+}
+
+strong {
+	font-weight: 500;
+}
+
+pre {
+	white-space: pre-wrap;
+}
+
+progress {
+	-webkit-appearance: none;
+}
+
+button
+{
+	border: 0.2em solid transparent;
+	padding: 0.5em 1.25em;
+	border-radius: 1em;
+	font-size: 1em;
+	cursor: pointer;
+}
+
+button:active, button:focus {
+	outline: none;
+}
+
+button.blue
+{
+	background-color: #00aeef;
+	color: #fff;
+}
+
+button.white
+{
+	background-color: #fff;
+	color: #00aeef;
+}
+
+button.blue:enabled:hover {
+	border: 0.2em solid rgba(255,255,255,0.25);
+}
+
+button.white:enabled:hover {
+	border: 0.2em solid rgba(0,0,0,0.1);
+}
+
+button.blue:disabled
+{
+	cursor: default;
+	color: #ccc;
+}
+
+button.white:disabled
+{
+	background-color: #ccc;
+	cursor: default;
+}
+
+progress::-webkit-progress-bar
+{
+	background-color: #fff;
+	border: 1px solid #00aeef;
+	border-radius: 1em;
+	overflow: hidden;
+	height: 1.5em;
+}
+
+progress::-webkit-progress-value {
+	background-color: #00aeef;
+}
+
+input[type="text"], input[type="number"], input[type="month"], select
+{
+	padding: 0.8em 1em;
+	border-radius: 2em;
+	min-width: 10em;
+	font-size: 1em;
+	outline: none;
+	border: none;
+}
+
+input[type="text"]
+{
+	border: 0.1em solid transparent;
+	min-width: 20em;
+}
+
+input[type="text"]:focus {
+	border: 0.1em solid #ddd;
+}
+
+input[type="text"]::placeholder
+{
+	font-style: italic;
+	font-weight: 100;
+	color: #ccc;
+}
+
+input[type="number"]::-webkit-inner-spin-button
+{
+	opacity: 1;
+	border: 1px solid #000;
+}
+
+.loading-icon {
+	display: block !important;
+}
+
+.loading-icon .image-wrapper, .loading-icon .image-wrapper img {
+	max-width: 100%;
+}
+
+.overlay
+{
+	background-color: rgba(0,0,0,0.5);
+	position: absolute;
+	z-index: 9999;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.overlay p
+{
+	font-size: 1.75em;
+	padding: 1.5em;
+	color: #fff;
+	margin: 0;
+}
+
+.state
+{
+	min-width: 100%;
+	min-height: 100%;
+	display: flex;
+	flex-direction: column;
+}
+
+.state > *:first-child
+{
+	position: relative;
+	flex-shrink: 1;
+	flex-grow: 1;
+}
+
+.state > *:last-child
+{
+	text-align: right;
+	padding: 1em;
+	
+	flex-shrink: 1;
+	flex-grow: 0;
+}
+
+.state > *:last-child > button
+{
+	display: inline-block;
+	margin-left: 1em;
+}
+
+.state.scrollable
+{
+	background-color: #fff;
+	height: 100%;
+}
+
+.state.scrollable > *:first-child {
+	overflow-y: auto;
+}
+
+.state.scrollable > *:first-child > *:first-child {
+	min-height: min-content;
+}
+
+.state.scrollable > *:last-child
+{
+	border-top: 1px solid #ccc;
+	background-color: #eee;
+}
+
+.state.blue
+{
+	background-color: #00aeef;
+	color: #fff;
+}
+
+.state .section-wrapper, .state .section-wrapper section
+{
+	display: flex;
+	flex-direction: column !important;
+	align-items: center;
+	justify-content: center;
+}
+
+.state .section-wrapper .section-nav-wrapper {
+	padding-bottom: 2em;
+}
+
+.section-wrapper .section-nav-wrapper button
+{
+	border-radius: 100%;
+	text-align: center;
+	margin: 0 1em;
+	padding: 0;
+	width: 4em;
+	height: 4em;
+	
+	display: inline-flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.section-wrapper .section-nav-wrapper button img {
+	width: 2em;
+}
+
+.section-wrapper .section-nav-wrapper button:enabled, .section-wrapper .section-nav-wrapper button:enabled img {
+	cursor: pointer;
+}
+
+.section-wrapper .section-progress-display
+{
+	padding-top: 2em;
+	
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	justify-content: center;
+}
+
+.section-wrapper .section-progress-display .progress-item
+{
+	margin: 0 1.25em;
+	
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+}
+
+.section-wrapper .section-progress-display .progress-item .highlight-circle
+{
+	border: 1px solid #fff;
+	margin-bottom: 0.6em;
+	border-radius: 100%;
+	padding: 1em;
+}
+
+.section-wrapper .section-progress-display .progress-item .highlight-circle.highlighted {
+	background-color: #fff;
+}
+
+.section-wrapper section
+{
+	flex: 1;
+	padding: 1.5em;
+	min-width: 40%;
+}
+
+.section-wrapper section.spancolumns {
+	min-width: 90%;
+}
+
+.section-wrapper section .name
+{
+	padding-bottom: 1em;
+	font-size: 2em;
+}
+
+.section-wrapper section p, .section-wrapper section ul.display-list
+{
+	padding-bottom: 2em;
+	font-size: 1em;
+}
+
+.section-wrapper section .field {
+	font-size: 1em;
+}
+
+.section-wrapper section ul, .section-wrapper section ul li
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.section-wrapper section ul li {
+	padding: 0.5em 0;
+}
+
+.section-wrapper section .field.fullwidth
+{
+	display: flex;
+	flex-direction: row;
+}
+
+.section-wrapper section .field.fullwidth > * {
+	flex: 1;
+}
+
+.section-wrapper section input[type="checkbox"] {
+	margin-right: 0.5em;
+}
+
+.section-wrapper section .multifield
+{
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+}
+
+.section-wrapper section .multifield.forceblock {
+	display: block;
+}
+
+.section-wrapper section .multifield > * + * {
+	padding-left: 2.5em;
+}
+
+.section-wrapper section .withlabel label
+{
+	padding-right: 0.5em;
+	display: inline-block;
+}
+
+.section-wrapper section .field button {
+	margin-left: 0.5em;
+}
+
+.section-wrapper section .forceblock .field
+{
+	padding-bottom: 1em;
+}
+
+.section-wrapper section .forceblock .withlabel label {
+	font-weight: bold;
+}
+
+.section-wrapper section .forceblock .withlabel label:after {
+	content: ":";
+}
+
+.section-wrapper section ul.display-list, .section-wrapper section ul.display-list li {
+	list-style-type: disc;
+}
+
+.section-wrapper section ul.display-list li
+{
+	max-width: 60%;
+	margin: 0 auto;
+}
+
+.section-wrapper section p.list-header {
+	padding-bottom: 0.5em;
+}
+
+
+/* VALIDATION REPORT AND DATA PRESENCE REPORT STYLES */
+
+.report
+{
+	font-size: 0.9em;
+	padding: 2em;
+}
+
+.report h1, #invalid-request .report h2 {
+	font-weight: normal;
+}
+
+.report h2,
+.report p,
+.report ul {
+	margin: 1em 0;
+}
+
+.report ul.report-stations-list + h2 {
+	margin-top: 2em;
+}
+
+.report ul.report-stations-list
+{
+	padding: 0;
+	margin: 0;
+}
+
+.report ul.report-stations-list li
+{
+	padding: 0;
+	min-width: 4em;
+	margin: 0.25em 0.5em;
+	display: inline-block;
+}
+
+.report table.presence-table {
+	border-collapse: collapse;
+}
+
+.report table.presence-table th {
+	background-color: #eee;
+}
+
+.report table.presence-table th, table.presence-table td
+{
+	border: 1px solid #ccc;
+	padding: 1em;
+}
+
+.report table.presence-table th, table.presence-table td:first-child {
+	font-weight: bold;
+}

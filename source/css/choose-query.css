@@ -1,0 +1,54 @@
+#choose-query ul.queries, #choose-query ul.queries li
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+#choose-query ul.queries li
+{
+	padding: 1.5em 1em;
+	text-align: center;
+	font-size: 1.25em;
+}
+
+#choose-query ul.queries li, #choose-query ul.queries li span {
+	cursor: pointer;
+}
+
+#choose-query ul.queries li:hover, #choose-query ul.queries li:nth-child(odd):hover {
+	background-color: #00aeef;
+}
+
+#choose-query ul.queries li:nth-child(odd) {
+	background-color: #f7f7f7;
+}
+
+#choose-query ul.queries li span
+{
+	font-size: 0.6em;
+	line-height: 1.5em;
+	display: block;
+	color: rgba(0,0,0,0.5);
+}
+
+#choose-query ul.queries li .name
+{
+	padding-bottom: 0.5em;
+	line-height: 1em;
+	font-size: 1em;
+	color: #00aeef;
+}
+
+#choose-query ul.queries li:hover span {
+	color: #fff;
+}
+
+#choose-query .no-queries
+{
+	color: rgba(0,0,0,0.75);
+	text-align: center;
+	padding-top: 2em;
+	font-size: 0.8em;
+	display: block;
+}

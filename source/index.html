@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+	<head>
+		<title>ClimateQuery</title>
+		<link href="./fonts/roboto.css" rel="stylesheet" type="text/css">
+		<link href="./css/common.css" rel="stylesheet" type="text/css">
+		<link href="./css/hidpi.css" rel="stylesheet" type="text/css">
+		<link href="./css/loading.css" rel="stylesheet" type="text/css">
+		<link href="./css/dataset-list.css" rel="stylesheet" type="text/css">
+		<link href="./css/create-dataset.css" rel="stylesheet" type="text/css">
+		<link href="./css/building-dataset.css" rel="stylesheet" type="text/css">
+		<link href="./css/choose-query.css" rel="stylesheet" type="text/css">
+		<link href="./css/query-form.css" rel="stylesheet" type="text/css">
+		<script type="text/javascript">
+			
+			const UIStateManager = require('./js/ui/UIStateManager.js').UIStateManager;
+			const $ = require('jquery');
+			
+			//When running in development mode, use Devtron and also live-reload CSS changes
+			if (require('electron-is-dev') === true)
+			{
+				require('devtron').install();
+				require('electron-css-reload')();
+			}
+			
+			$(document).ready(() =>
+			{
+				//Load the UI
+				window.ui = new UIStateManager();
+			});
+			
+		</script>
+	</head>
+	<body></body>
+</html>

@@ -1,0 +1,94 @@
+{
+	"name": "ClimateQuery",
+	"description": "ClimateQuery Weather Data Processing Tool",
+	"homepage": "https://github.com/adamrehn/ClimateQuery",
+	"main": "source/js/main.js",
+	"version": "1.0.0",
+	"files": [
+		"source/js",
+		"source/css",
+		"source/index.html"
+	],
+	"engines": {
+		"node": ">=8.0.0"
+	},
+	"author": {
+		"name": "Adam Rehn",
+		"email": "adam.rehn@my.jcu.edu.au"
+	},
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/adamrehn/ClimateQuery.git"
+	},
+	"dependencies": {
+		"cheerio": "*",
+		"crypto-js": "*",
+		"csv-parse": "*",
+		"csv-stringify": "*",
+		"dateformat": "*",
+		"electron-is-dev": "*",
+		"glob": "*",
+		"isnumeric": "*",
+		"jquery": "*",
+		"mkdirp": "*",
+		"numeral": "*",
+		"pad-number": "*",
+		"request": "*",
+		"sqlite3": "*",
+		"unzip": "*",
+		"util.promisify": "*"
+	},
+	"devDependencies": {
+		"devtron": "*",
+		"electron": "*",
+		"electron-builder": "*",
+		"electron-css-reload": "*",
+		"rimraf": "*",
+		"tslint": "*",
+		"typescript": "<2.6.0",
+		"@types/cheerio": "*",
+		"@types/crypto-js": "*",
+		"@types/csv-parse": "*",
+		"@types/csv-stringify": "*",
+		"@types/glob": "*",
+		"@types/jquery": "*",
+		"@types/mkdirp": "*",
+		"@types/numeral": "*",
+		"@types/request": "*",
+		"@types/sqlite3": "*"
+	},
+	"build": {
+		"appId": "au.edu.jcu.climatequery",
+		"compression": "maximum",
+		"mac": {
+			"category": "public.app-category.utilities",
+			"target": [
+				"zip",
+				"dmg",
+				"pkg",
+				"dir"
+			]
+		},
+		"win": {
+			"target": [
+				"nsis",
+				"zip",
+				"dir"
+			]
+		},
+		"nsis": {
+			"oneClick": false,
+			"perMachine": true,
+			"allowToChangeInstallationDirectory": true
+		}
+	},
+	"scripts": {
+		"build": "tsc",
+		"clean": "rimraf ./package-lock.json ./dist ./node_modules ./source/js",
+		"dist": "npm run build && build",
+		"lint": "tslint --project ./tsconfig.json --type-check --format verbose",
+		"pack": "npm run build && build --dir",
+		"postinstall": "electron-builder install-app-deps",
+		"start": "npm run build && electron ."
+	}
+}
