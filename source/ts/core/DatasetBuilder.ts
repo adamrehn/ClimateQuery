@@ -98,6 +98,8 @@ export class DatasetBuilder
 			['Days of accumulation of minimum temperature',                                   'AccumulationDaysMinTemp'],
 			['Average daily air temperature (using all available observations) in Degrees C', 'AverageTemp'],
 			['Quality of average daily temperature (sum_obs/count_obs)',                      'QualityAverageTemp'],
+			['Total daily global solar exposure - derived from satellite data in MJ.m-2',     'SolarExposure'],
+			['Quality Flag (refer to notes)',                                                 'QualitySolarExposure'],
 			['#',                                                                             'Sentinel']
 		]);
 	}

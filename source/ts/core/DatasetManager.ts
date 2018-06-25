@@ -105,7 +105,8 @@ export class DatasetManager
 		//Include the quality fields for each datatype code
 		let mappings = new Map<DatatypeCode, string>([
 			[DatatypeCode.Rainfall,              'QualityRainfall = "Y"'],
-			[DatatypeCode.MinMaxMeanTemperature, 'QualityMaxTemp = "Y" AND QualityMinTemp = "Y"']
+			[DatatypeCode.MinMaxMeanTemperature, 'QualityMaxTemp = "Y" AND QualityMinTemp = "Y"'],
+			[DatatypeCode.SolarExposure,         'QualitySolarExposure = "Y"']
 		]);
 		let whereClauses = codes.map((code : DatatypeCode) => { return mappings.get(code); });
 		query += whereClauses.join(' AND ');

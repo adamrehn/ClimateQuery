@@ -103,6 +103,54 @@ export class QueryManager
 					['$upperBound', 'number']
 				]),
 				[ DatatypeCode.MinMaxMeanTemperature ]
+			),
+			
+			
+			//Solar Exposure queries
+			
+			new Query(
+				'Average daily solar exposure',
+				'SELECT AVG(SolarExposure) as AverageSolarExposure FROM dataset',
+				[],
+				new Map<string,Object>(),
+				new Map<string,string>(),
+				[ DatatypeCode.SolarExposure ]
+			),
+			
+			new Query(
+				'Number of days with solar exposure above threshold',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[ 'SolarExposure > $threshold' ],
+				new Map<string,Object>([[ '$threshold', 0.0 ]]),
+				new Map<string,string>([[ '$threshold', 'number' ]]),
+				[ DatatypeCode.SolarExposure ]
+			),
+			
+			new Query(
+				'Number of days with solar exposure below threshold',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[ 'SolarExposure < $threshold' ],
+				new Map<string,Object>([[ '$threshold', 0.0 ]]),
+				new Map<string,string>([[ '$threshold', 'number' ]]),
+				[ DatatypeCode.SolarExposure ]
+			),
+			
+			new Query(
+				'Number of days with solar exposure within range',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'SolarExposure > $lowerBound',
+					'SolarExposure < $upperBound'
+				],
+				new Map<string,Object>([
+					['$lowerBound', 0.0],
+					['$upperBound', 0.0]
+				]),
+				new Map<string,string>([
+					['$lowerBound', 'number'],
+					['$upperBound', 'number']
+				]),
+				[ DatatypeCode.SolarExposure ]
 			)
 			
 		];
