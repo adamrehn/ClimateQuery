@@ -21,7 +21,7 @@ export class EnvironmentUtil
 	{
 		return new Promise((resolve : Function, reject : Function) =>
 		{
-			glob(pattern.replace(/\\/g, '/'), (err : Error, matches : string[]) =>
+			glob(pattern.replace(/\\/g, '/'), (err : Error | null, matches : string[]) =>
 			{
 				if (err) {
 					reject(err);

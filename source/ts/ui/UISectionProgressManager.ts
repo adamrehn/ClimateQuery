@@ -18,7 +18,7 @@ export class UISectionProgressManager
 	private events : EventEmitter;
 	private root : JQuery<HTMLElement>;
 	private sections : Section[];
-	private selectedIndex : number;
+	private selectedIndex : number = 0;
 	private progressDisplay : JQuery<HTMLElement>;
 	private backButton : JQuery<HTMLElement>;
 	private nextButton : JQuery<HTMLElement>;

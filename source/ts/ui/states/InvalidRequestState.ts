@@ -28,7 +28,7 @@ export class InvalidRequestState extends ReportDisplayBase
 		return 'Dataset Creation Request Validation Report';
 	}
 	
-	private validationResults : ValidationReport;
+	private validationResults! : ValidationReport;
 	
 	public onShow(...args: any[]) : void
 	{

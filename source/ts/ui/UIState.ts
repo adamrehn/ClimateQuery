@@ -9,13 +9,13 @@ import * as $ from 'jquery';
 export class UIState
 {
 	//All states use these member fields to interact with the application
-	protected controller : ApplicationController;
-	protected stateTransition : UIStateTransitionHandler;
-	protected dialogProvider : UIDialogProvider;
-	protected overlayProvider : UIOverlayProvider;
-	protected iconProvider : UILoadingIconProvider;
-	protected errorHandler : UIErrorHandler;
-	protected root : JQuery<HTMLElement>;
+	protected controller! : ApplicationController;
+	protected stateTransition! : UIStateTransitionHandler;
+	protected dialogProvider! : UIDialogProvider;
+	protected overlayProvider! : UIOverlayProvider;
+	protected iconProvider! : UILoadingIconProvider;
+	protected errorHandler! : UIErrorHandler;
+	protected root! : JQuery<HTMLElement>;
 	
 	//Specifies the title that should be shown in the application's title bar while the state is visible
 	public getTitle() {

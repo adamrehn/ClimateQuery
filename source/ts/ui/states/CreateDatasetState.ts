@@ -22,14 +22,14 @@ export class CreateDatasetState extends UIState
 		return 'Create New Dataset';
 	}
 	
-	private stations : number[];
-	private formFields : Map<string, JQuery<HTMLElement>>;
-	private chooseDirButtons : JQuery<HTMLElement>;
-	private chooseCsvButton : JQuery<HTMLElement>;
-	private createButton : JQuery<HTMLElement>;
-	private cancelButton : JQuery<HTMLElement>;
-	private sectionManager : UISectionProgressManager;
-	private currentSection : string;
+	private stations! : number[];
+	private formFields! : Map<string, JQuery<HTMLElement>>;
+	private chooseDirButtons! : JQuery<HTMLElement>;
+	private chooseCsvButton! : JQuery<HTMLElement>;
+	private createButton! : JQuery<HTMLElement>;
+	private cancelButton! : JQuery<HTMLElement>;
+	private sectionManager! : UISectionProgressManager;
+	private currentSection! : string;
 	
 	public onHide() : void
 	{

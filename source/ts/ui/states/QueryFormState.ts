@@ -22,15 +22,15 @@ export class QueryFormState extends UIState
 		return 'Query Details';
 	}
 	
-	private dataset : Dataset;
-	private datasetIndex : number;
-	private query : Query;
-	private formFields : Map<string, JQuery<HTMLElement>>;
-	private aggregationFieldsRoot : JQuery<HTMLElement>;
-	private exportButton : JQuery<HTMLElement>;
-	private cancelButton : JQuery<HTMLElement>;
-	private sectionManager : UISectionProgressManager;
-	private currentSection : string;
+	private dataset! : Dataset;
+	private datasetIndex! : number;
+	private query! : Query;
+	private formFields! : Map<string, JQuery<HTMLElement>>;
+	private aggregationFieldsRoot! : JQuery<HTMLElement>;
+	private exportButton! : JQuery<HTMLElement>;
+	private cancelButton! : JQuery<HTMLElement>;
+	private sectionManager! : UISectionProgressManager;
+	private currentSection! : string;
 	
 	public onShow(...args: any[]) : void
 	{

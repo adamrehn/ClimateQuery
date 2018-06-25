@@ -17,13 +17,13 @@ export class BuildingDatasetState extends UIState
 		return 'Building Dataset';
 	}
 	
-	private datasetName : string;
-	private request : DataRequest;
-	private progressPercent : JQuery<HTMLElement>;
-	private progressBar : JQuery<HTMLElement>;
-	private progressText : JQuery<HTMLElement>;
-	private buttonWrapper : JQuery<HTMLElement>;
-	private doneButton : JQuery<HTMLElement>;
+	private datasetName! : string;
+	private request! : DataRequest;
+	private progressPercent! : JQuery<HTMLElement>;
+	private progressBar! : JQuery<HTMLElement>;
+	private progressText! : JQuery<HTMLElement>;
+	private buttonWrapper! : JQuery<HTMLElement>;
+	private doneButton! : JQuery<HTMLElement>;
 	
 	public onShow(...args: any[]) : void
 	{

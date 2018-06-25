@@ -9,8 +9,8 @@ import { EnvironmentUtil } from './EnvironmentUtil';
 
 class ProgressDetails
 {
-	public current : number;
-	public total : number;
+	public current : number = 0;
+	public total : number = 0;
 }
 
 export class DatasetBuilder

@@ -8,12 +8,12 @@ import * as fs from 'fs';
 
 export abstract class ReportDisplayBase extends UIState
 {
-	private reportDisplay : JQuery<HTMLElement>;
-	private saveButton : JQuery<HTMLElement>;
-	private closeButton : JQuery<HTMLElement>;
+	private reportDisplay! : JQuery<HTMLElement>;
+	private saveButton! : JQuery<HTMLElement>;
+	private closeButton! : JQuery<HTMLElement>;
 	
 	//This should be populated by the concrete child state in the onShow() method
-	protected validationReport : JQuery<HTMLElement>;
+	protected validationReport! : JQuery<HTMLElement>;
 	
 	//Returns the identifier for the concrete child state that implements this class
 	protected abstract getIdentifier() : string;

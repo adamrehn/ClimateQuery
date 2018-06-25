@@ -21,12 +21,12 @@ export class DatasetListState extends UIState
 		return 'Existing Datasets';
 	}
 	
-	private listRoot : JQuery<HTMLElement>;
-	private listWrapper : JQuery<HTMLElement>;
-	private exportOverlay : JQuery<HTMLElement>;
-	private noDatasetsMessage : JQuery<HTMLElement>;
-	private createButton : JQuery<HTMLElement>;
-	private defaultErrorHandler : (err:Error)=>void;
+	private listRoot! : JQuery<HTMLElement>;
+	private listWrapper! : JQuery<HTMLElement>;
+	private exportOverlay! : JQuery<HTMLElement>;
+	private noDatasetsMessage! : JQuery<HTMLElement>;
+	private createButton! : JQuery<HTMLElement>;
+	private defaultErrorHandler! : (err:Error)=>void;
 	
 	public onShow(...args: any[]) : void {
 		this.reloadDatasets();

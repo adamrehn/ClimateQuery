@@ -22,7 +22,7 @@ import { QueryFormState } from './states/QueryFormState'
 export class UIStateManager implements UIStateTransitionHandler, UIDialogProvider, UIOverlayProvider, UIErrorHandler, UILoadingIconProvider
 {
 	private states : Map<string,UIState>;
-	private activeState : UIState;
+	private activeState! : UIState;
 	private loadingState : string = LoadingState.identifier();
 	private defaultState : string = DatasetListState.identifier();
 	private overlayDiv : JQuery<HTMLElement>;

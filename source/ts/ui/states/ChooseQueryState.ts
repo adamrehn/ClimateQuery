@@ -17,12 +17,12 @@ export class ChooseQueryState extends UIState
 		return 'Select Query';
 	}
 	
-	private dataset : Dataset;
-	private datasetIndex : number;
-	private supportedQueries : Query[];
-	private listRoot : JQuery<HTMLElement>;
-	private noQueriesMessage : JQuery<HTMLElement>;
-	private cancelButton : JQuery<HTMLElement>;
+	private dataset! : Dataset;
+	private datasetIndex! : number;
+	private supportedQueries! : Query[];
+	private listRoot! : JQuery<HTMLElement>;
+	private noQueriesMessage! : JQuery<HTMLElement>;
+	private cancelButton! : JQuery<HTMLElement>;
 	
 	public onShow(...args: any[]) : void
 	{

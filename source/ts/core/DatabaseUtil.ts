@@ -53,7 +53,7 @@ export class DatabaseUtil
 		return new Promise((resolve : Function, reject : Function) =>
 		{
 			let mode = ((readOnly === true) ? sqlite3.OPEN_READONLY : sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE);
-			let db = new sqlite3.Database(filename, mode, (err : Error) =>
+			let db = new sqlite3.Database(filename, mode, (err : Error | null) =>
 			{
 				if (err)
 				{
@@ -72,7 +72,7 @@ export class DatabaseUtil
 	{
 		return new Promise((resolve : Function, reject : Function) =>
 		{
-			db.close((err : Error) =>
+			db.close((err : Error | null) =>
 			{
 				if (err) {
 					reject(err);

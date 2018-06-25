@@ -45,7 +45,7 @@
 		"electron-css-reload": "*",
 		"rimraf": "*",
 		"tslint": "*",
-		"typescript": "<2.6.0",
+		"typescript": "*",
 		"@types/cheerio": "*",
 		"@types/crypto-js": "*",
 		"@types/csv-parse": "*",

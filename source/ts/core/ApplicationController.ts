@@ -9,7 +9,7 @@ import { RequestValidator } from './RequestValidator'
 
 export class ApplicationController
 {
-	private datasetManager : DatasetManager;
+	private datasetManager! : DatasetManager;
 	private queryManager : QueryManager;
 	
 	//Wraps instance creation in a Promise interface
