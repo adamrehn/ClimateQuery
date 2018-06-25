@@ -180,7 +180,7 @@ export class RequestValidator
 			]));
 			
 			//Store the list as a database table
-			await DatabaseUtil.tableFromData(db, 'stations_' + datatypeCode, stations);
+			await DatabaseUtil.tableFromData(db, 'stations_' + datatypeCode, stations, false);
 			return true;
 		}
 		catch (err)

@@ -127,20 +127,20 @@ export class DatasetBuilder
 	{
 		try
 		{
-			//Parse the first CSV file to retrieve the column names
+			//Parse the first CSV file to retrieve the column names and representative values
 			let firstFile : string[][] = await CsvDataUtil.parseBOMCsv(csvFiles[0]);
-			let headerRow = firstFile.slice(0, 1);
 			
 			//Remap the column names to more SQL-friendly versions
-			DatabaseUtil.renameFields(headerRow, this.fieldReplacements());
+			DatabaseUtil.renameFields(firstFile, this.fieldReplacements());
 			
 			//Keep track of the column indices for the "Station" and "Year" fields
+			let headerRow = firstFile.slice(0, 1);
 			let stationColumn = headerRow[0].indexOf('Station');
 			let yearColumn = headerRow[0].indexOf('Year');
 			
 			//Create the database table
 			let tableName = this.tableName(datatypeCode);
-			await DatabaseUtil.tableFromData(db, tableName, headerRow);
+			await DatabaseUtil.tableFromData(db, tableName, firstFile, true);
 			
 			//Parse each of the CSV files in sequence
 			//NOTE: due to the single-threaded nature of Node.js, initiating processing for multiple files

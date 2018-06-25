@@ -247,7 +247,7 @@ export class DatabaseUtil
 	}
 	
 	//Creates a table in a database using the supplied data
-	public static tableFromData(db : sqlite3.Database, tableName : string, data : any[])
+	public static tableFromData(db : sqlite3.Database, tableName : string, data : any[], createOnly : boolean)
 	{
 		return new Promise((resolve : Function, reject : Function) =>
 		{
@@ -277,6 +277,7 @@ export class DatabaseUtil
 				//If the entire column was empty, treat it as a text column
 				let fieldName = fields[i];
 				if (samples.length == 0) {
+					console.log(`THE COLUMN ${fieldName} WAS EMPTY, USING TEXT!`);
 					fieldTypes.set(fieldName, 'TEXT');
 				}
 				else
@@ -287,19 +288,25 @@ export class DatabaseUtil
 				}
 			}
 			
-			//Create the table and populate it
+			//Create the table and populate it (unless requested otherwise)
 			db.serialize(function()
 			{
 				//Create the table
 				let fieldDecls = fields.map((field : string) => { return field + ' ' + fieldTypes.get(field); });
 				DatabaseUtil.run(db, 'CREATE TABLE ' + tableName + ' (' + fieldDecls.join(', ') + ')', []).then((result : any) =>
 				{
-					//Populate the table
-					DatabaseUtil.batchInsert(db, tableName, rows).then((result : any) => {
+					//Determine if we are populating the table
+					if (createOnly === true) {
 						resolve(true);
-					}).catch((err : Error) => {
-						reject(err);
-					});
+					}
+					else
+					{
+						DatabaseUtil.batchInsert(db, tableName, rows).then((result : any) => {
+							resolve(true);
+						}).catch((err : Error) => {
+							reject(err);
+						});
+					}
 				})
 				.catch((err : Error) => {
 					reject(err);
