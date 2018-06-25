@@ -15,7 +15,7 @@ export class QueryManager
 			new Query(
 				'Average daily rainfall',
 				'SELECT AVG(Rainfall) as AverageRainfall FROM dataset',
-				[],
+				[ 'Rainfall != ""' ],
 				new Map<string,Object>(),
 				new Map<string,string>(),
 				[ DatatypeCode.Rainfall ]
@@ -24,7 +24,7 @@ export class QueryManager
 			new Query(
 				'Total rainfall',
 				'SELECT SUM(Rainfall) as TotalRainfall FROM dataset',
-				[],
+				[ 'Rainfall != ""' ],
 				new Map<string,Object>(),
 				new Map<string,string>(),
 				[ DatatypeCode.Rainfall ]
@@ -33,7 +33,10 @@ export class QueryManager
 			new Query(
 				'Number of days with no rainfall',
 				'SELECT COUNT(*) as NumDays FROM dataset',
-				[ 'Rainfall = 0.0' ],
+				[
+					'Rainfall != ""',
+					'Rainfall = 0.0'
+				],
 				new Map<string,Object>(),
 				new Map<string,string>(),
 				[ DatatypeCode.Rainfall ]
@@ -42,7 +45,10 @@ export class QueryManager
 			new Query(
 				'Number of days with rainfall above threshold',
 				'SELECT COUNT(*) as NumDays FROM dataset',
-				[ 'Rainfall > $threshold' ],
+				[
+					'Rainfall != ""',
+					'Rainfall > $threshold'
+				],
 				new Map<string,Object>([[ '$threshold', 0.0 ]]),
 				new Map<string,string>([[ '$threshold', 'number' ]]),
 				[ DatatypeCode.Rainfall ]
@@ -54,7 +60,7 @@ export class QueryManager
 			new Query(
 				'Average maximum daily temperature',
 				'SELECT AVG(MaxTemp) as AverageMaxTemp FROM dataset',
-				[],
+				[ 'MaxTemp != ""' ],
 				new Map<string,Object>(),
 				new Map<string,string>(),
 				[ DatatypeCode.MinMaxMeanTemperature ]
@@ -63,7 +69,7 @@ export class QueryManager
 			new Query(
 				'Average minimum daily temperature',
 				'SELECT AVG(MinTemp) as AverageMinTemp FROM dataset',
-				[],
+				[ 'MinTemp != ""' ],
 				new Map<string,Object>(),
 				new Map<string,string>(),
 				[ DatatypeCode.MinMaxMeanTemperature ]
@@ -72,7 +78,10 @@ export class QueryManager
 			new Query(
 				'Number of days with maximum temperature above threshold',
 				'SELECT COUNT(*) as NumDays FROM dataset',
-				[ 'MaxTemp > $threshold' ],
+				[
+					'MaxTemp != ""',
+					'MaxTemp > $threshold'
+				],
 				new Map<string,Object>([[ '$threshold', 0.0 ]]),
 				new Map<string,string>([[ '$threshold', 'number' ]]),
 				[ DatatypeCode.MinMaxMeanTemperature ]
@@ -81,7 +90,10 @@ export class QueryManager
 			new Query(
 				'Number of days with minimum temperature below threshold',
 				'SELECT COUNT(*) as NumDays FROM dataset',
-				[ 'MinTemp < $threshold' ],
+				[
+					'MinTemp != ""',
+					'MinTemp < $threshold'
+				],
 				new Map<string,Object>([[ '$threshold', 0.0 ]]),
 				new Map<string,string>([[ '$threshold', 'number' ]]),
 				[ DatatypeCode.MinMaxMeanTemperature ]
@@ -91,6 +103,8 @@ export class QueryManager
 				'Number of days with temperature within range',
 				'SELECT COUNT(*) as NumDays FROM dataset',
 				[
+					'MinTemp != ""',
+					'MaxTemp != ""',
 					'MinTemp > $lowerBound',
 					'MaxTemp < $upperBound'
 				],
@@ -111,7 +125,7 @@ export class QueryManager
 			new Query(
 				'Average daily solar exposure',
 				'SELECT AVG(SolarExposure) as AverageSolarExposure FROM dataset',
-				[],
+				[ 'SolarExposure != ""' ],
 				new Map<string,Object>(),
 				new Map<string,string>(),
 				[ DatatypeCode.SolarExposure ]
@@ -120,7 +134,10 @@ export class QueryManager
 			new Query(
 				'Number of days with solar exposure above threshold',
 				'SELECT COUNT(*) as NumDays FROM dataset',
-				[ 'SolarExposure > $threshold' ],
+				[
+					'SolarExposure != ""',
+					'SolarExposure > $threshold'
+				],
 				new Map<string,Object>([[ '$threshold', 0.0 ]]),
 				new Map<string,string>([[ '$threshold', 'number' ]]),
 				[ DatatypeCode.SolarExposure ]
@@ -129,7 +146,10 @@ export class QueryManager
 			new Query(
 				'Number of days with solar exposure below threshold',
 				'SELECT COUNT(*) as NumDays FROM dataset',
-				[ 'SolarExposure < $threshold' ],
+				[
+					'SolarExposure != ""',
+					'SolarExposure < $threshold'
+				],
 				new Map<string,Object>([[ '$threshold', 0.0 ]]),
 				new Map<string,string>([[ '$threshold', 'number' ]]),
 				[ DatatypeCode.SolarExposure ]
@@ -139,6 +159,7 @@ export class QueryManager
 				'Number of days with solar exposure within range',
 				'SELECT COUNT(*) as NumDays FROM dataset',
 				[
+					'SolarExposure != ""',
 					'SolarExposure > $lowerBound',
 					'SolarExposure < $upperBound'
 				],
