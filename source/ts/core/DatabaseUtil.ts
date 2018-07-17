@@ -8,6 +8,9 @@ const isNumeric : any = require('isnumeric');
 //Export the sqlite3 database handle type with an alias
 export {Database as DatabaseHandle} from 'sqlite3';
 
+//Controls whether we are in database debug mode
+const DB_DEBUG : boolean = false;
+
 export class DatabaseUtil
 {
 	//Helper function to sanitise a table or column name, since sqlite doesn't support
@@ -60,7 +63,17 @@ export class DatabaseUtil
 					Error.captureStackTrace(err);
 					reject(err);
 				}
-				else {
+				else
+				{
+					//If debug mode is enabled, activate verbose logging for the database
+					if (DB_DEBUG == true)
+					{
+						sqlite3.verbose();
+						db.on('trace', (sql : string) => {
+							console.log(sql);
+						});
+					}
+					
 					resolve(db);
 				}
 			});
