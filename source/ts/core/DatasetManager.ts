@@ -104,13 +104,20 @@ export class DatasetManager
 		query += ' FROM dataset WHERE ';
 		
 		//Include the quality fields for each datatype code
-		let mappings = new Map<DatatypeCode, string>([
-			[DatatypeCode.Rainfall,              'QualityRainfall = "Y"'],
-			[DatatypeCode.MinMaxMeanTemperature, 'QualityMaxTemp = "Y" AND QualityMinTemp = "Y"'],
-			[DatatypeCode.SolarExposure,         'QualitySolarExposure = "Y"']
+		let mappings = new Map<DatatypeCode, string[]>([
+			[DatatypeCode.Rainfall,               ['QualityRainfall']],
+			[DatatypeCode.MinMaxMeanTemperature,  ['QualityMaxTemp', 'QualityMinTemp']],
+			[DatatypeCode.SolarExposure,          ['QualitySolarExposure']],
+			[DatatypeCode.WindDewHumidityAirTemp, ['QualityAirTemp', 'QualityDewPoint', 'QualityHumidity', 'QualityWindSpeed', 'QualityWindDirection', 'QualityMaxWindGust']]
 		]);
-		let whereClauses = codes.map((code : DatatypeCode) => { return mappings.get(code); });
-		query += whereClauses.join(' AND ');
+		query += codes.map((code : DatatypeCode) =>
+		{
+			return (<string[]>mappings.get(code)).map((field : string) => {
+				return `${field} = "Y"`;
+			})
+			.join(' AND ');
+		})
+		.join(' AND ');
 		
 		//If we are performing aggregation, append the GROUP BY clause
 		if (aggregateBy !== undefined) {

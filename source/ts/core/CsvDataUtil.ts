@@ -1,6 +1,7 @@
 import * as csv_stringify from 'csv-stringify';
 import * as csv_parse from 'csv-parse';
 import * as fs from 'fs';
+import * as mathjs from 'mathjs';
 import { DatatypeCode } from './DatatypeCodes';
 
 //Wrap fs.readFile() fs.writeFile() in a Promise-based interface
@@ -44,8 +45,46 @@ export class CsvDataUtil
 	{
 		try
 		{
-			//Attempt to parse the CSV file, removing any double-quotes that would make the data ill-formed
-			let transform = (rawData : string) => { return rawData.replace(/"/g, ''); };
+			//We need to transform the raw data before we can safely parse it
+			let transform = (rawData : string) =>
+			{
+				//Remove any double-quotes that would make the data ill-formed
+				let transformed = rawData.replace(/"/g, '');
+				
+				//Reformat combined column names for timestamps
+				transformed = transformed.replace('Year Month Day Hour Minutes in YYYY,MM,DD,HH24,MI format in Local standard time', 'Year,Month,Day,Hour,Minute');
+				
+				//If there are extraneous lines of text (e.g. notes) before or after the actual data, discard them
+				//(Note that we need to be careful here to avoid accidentally discarding the header row)
+				let lines = transformed.split('\n');
+				let rowLength = mathjs.mode(lines.map((line : string) => { return line.length; }));
+				transformed = lines.filter((line : string, index : number) =>
+				{
+					//Determine if this is a data row
+					if (line.length == rowLength) {
+						return true;
+					}
+					
+					//Determine if this is the header row
+					if (index < lines.length-1 && lines[index+1].length == rowLength)
+					{
+						//If the line immediately preceding a data row does not have the correct comma count, it's not a header
+						//(Substring counting technique adapted from here: <https://stackoverflow.com/a/4009768>)
+						let dataCommas = (lines[index+1].match(/,/g) || []).length;
+						let lineCommas = (line.match(/,/g) || []).length;
+						if (dataCommas == lineCommas) {
+							return true;
+						}
+					}
+					
+					return false;
+				})
+				.join('\n');
+				
+				return transformed;
+			};
+			
+			//Attempt to parse the CSV file, performing our transforms prior to parsing
 			let result = await CsvDataUtil.parseCsv(csvFile, transform);
 			
 			//Strip away the excess whitespace introduced by the fixed-width formatting

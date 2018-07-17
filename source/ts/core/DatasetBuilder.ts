@@ -147,10 +147,13 @@ export class DatasetBuilder
 	{
 		return new Map<string,string>([
 			['dc',                                                                            'DC'],
+			['hm',                                                                            'HM'],
 			['Station Number',                                                                'Station'],
 			['Year',                                                                          'Year'],
 			['Month',                                                                         'Month'],
 			['Day',                                                                           'Day'],
+			['Hour',                                                                          'Hour'],
+			['Minute',                                                                        'Minute'],
 			['Precipitation in the 24 hours before 9am (local time) in mm',                   'Rainfall'],
 			['Quality of precipitation value',                                                'QualityRainfall'],
 			['Number of days of rain within the days of accumulation',                        'AccumulationDaysRainfall'],
@@ -165,6 +168,19 @@ export class DatasetBuilder
 			['Quality of average daily temperature (sum_obs/count_obs)',                      'QualityAverageTemp'],
 			['Total daily global solar exposure - derived from satellite data in MJ.m-2',     'SolarExposure'],
 			['Quality Flag (refer to notes)',                                                 'QualitySolarExposure'],
+			['Air Temperature in degrees C',                                                  'AirTemp'],
+			['Quality of air temperature',                                                    'QualityAirTemp'],
+			['Dew point temperature in degrees C',                                            'DewPoint'],
+			['Quality of dew point temperature',                                              'QualityDewPoint'],
+			['Relative humidity in percentage %',                                             'Humidity'],
+			['Quality of relative humidity',                                                  'QualityHumidity'],
+			['Wind speed in km/h',                                                            'WindSpeed'],
+			['Wind speed quality',                                                            'QualityWindSpeed'],
+			['Wind direction in degrees true',                                                'WindDirection'],
+			['Wind direction quality',                                                        'QualityWindDirection'],
+			['Speed of maximum windgust in last 10 minutes in  km/h',                         'MaxWindGust'],
+			['Quality of speed of maximum windgust in last 10 minutes',                       'QualityMaxWindGust'],
+			['AWS Flag',                                                                      'WeatherStationType'],
 			['#',                                                                             'Sentinel']
 		]);
 	}
