@@ -132,6 +132,39 @@ export class CsvDataUtil
 		});
 	}
 	
+	//Concatenates multiple station list CSV files, using the specified notes file to construct the common header
+	public static async concatenateStationLists(listFiles : string[], notesFile : string)
+	{
+		try
+		{
+			//Read the notes data and discard all text prior to the section describing the site details file format
+			let notesData = (await readFile(notesFile, {encoding: 'utf-8'})).replace(/\r\n/g, '\n');
+			notesData = notesData.substr(notesData.indexOf('\nSITE DETAILS FILE'));
+			
+			//Extract the list of header fields
+			let headerFields : string[] = [];
+			let sitesTableRegex = new RegExp('[0-9\\- ]+,[0-9 ]+,([^\n]+)\n', 'g');
+			let match : RegExpExecArray|null = null;
+			while ((match = sitesTableRegex.exec(notesData)) !== null) {
+				headerFields.push(match[1].trim().replace(/\.$/, '').replace(/,/g, ''));
+			}
+			
+			//Read all of the station lists into memory, discarding their individual headers
+			let rows : string[] = [];
+			for (let listFile of listFiles) {
+				rows = rows.concat(CsvDataUtil.stripExtraneousLines(await readFile(listFile, {encoding: 'utf-8'}), false));
+			}
+			
+			//Construct our common header and concatenate it with the extracted data rows
+			return headerFields.join(',') + '\n' + rows.join('\n');
+		}
+		catch (err)
+		{
+			//Propagate any errors
+			throw err;
+		}
+	}
+	
 	//Determines the length of a row of data in a BOM-format CSV file
 	private static dataRowLength(lines : string[]) : number {
 		return mathjs.mode(lines.map((line : string) => { return line.length; }));

@@ -126,19 +126,15 @@ export class RequestValidator
 		try
 		{
 			//Find the "station details" CSV file in the specified source directory
-			let matches : string[] = await EnvironmentUtil.glob(path.join(datatypeDir, '*_StnDet_*.txt'));
-			
-			//We should have exactly one matching file
-			if (matches.length != 1) {
-				throw new Error('failed to find station details file in source directory "' + datatypeDir + '"');
-			}
+			let stationsFile = await DatasetBuilder.getCodeStationList(datatypeDir);
 			
 			//Attempt to parse the CSV file
-			let stations : string[][] = await CsvDataUtil.parseBOMCsv(matches[0]);
+			let stations : string[][] = await CsvDataUtil.parseBOMCsv(stationsFile);
 			
 			//Remap the column names to more SQL-friendly versions
 			DatabaseUtil.renameFields(stations, new Map<string,string>([
 				["Record identifier",                                    "ID"],
+				["Record identifier - st",                               "ID"],
 				["Bureau of Meteorology Station Number",                 "Site"],
 				["Rainfall district code",                               "District"],
 				["Station Name",                                         "Name"],

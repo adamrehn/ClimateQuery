@@ -190,18 +190,18 @@ export class DatasetBuilder
 	}
 	
 	//Retrieves the list of CSV data files in the directory for the all datatypes in a dataset request
-	private static async getRequestDataFiles(request : DataRequest)
+	public static async getRequestDataFiles(request : DataRequest)
 	{
 		let dataFiles = new Map<DatatypeCode, string[]>();
 		for (let code of request.datatypeCodes) {
-			dataFiles.set(code, await DatasetBuilder.getCodeDataFiles(code, <string>(request.datatypeDirs.get(code))));
+			dataFiles.set(code, await DatasetBuilder.getCodeDataFiles(<string>(request.datatypeDirs.get(code))));
 		}
 		
 		return dataFiles;
 	}
 	
 	//Retrieves the list of CSV data files in the directory for the specified datatype
-	private static async getCodeDataFiles(datatypeCode : DatatypeCode, datatypeDir : string)
+	public static async getCodeDataFiles(datatypeDir : string)
 	{
 		//Retrieve the list of CSV data files
 		let matches : string[] = await EnvironmentUtil.glob(path.join(datatypeDir, '*_Data_*.txt'));
@@ -212,6 +212,56 @@ export class DatasetBuilder
 		}
 		
 		return matches;
+	}
+	
+	//Retrieves the list of station list files in the directory for the all datatypes in a dataset request
+	public static async getRequestStationLists(request : DataRequest)
+	{
+		let stationLists = new Map<DatatypeCode, string>();
+		for (let code of request.datatypeCodes) {
+			stationLists.set(code, await DatasetBuilder.getCodeStationList(<string>(request.datatypeDirs.get(code))));
+		}
+		
+		return stationLists;
+	}
+	
+	//Retrieves the station list file in the directory for the specified datatype
+	public static async getCodeStationList(datatypeDir : string)
+	{
+		//Find the "station details" CSV file in the specified source directory
+		let matches : string[] = await EnvironmentUtil.glob(path.join(datatypeDir, '*_StnDet_*.txt'));
+		
+		//We should have exactly one matching file
+		if (matches.length != 1) {
+			throw new Error('failed to find station details file in source directory "' + datatypeDir + '"');
+		}
+		
+		return matches[0];
+	}
+	
+	//Retrieves the list of notes files in the directory for the all datatypes in a dataset request
+	public static async getRequestNotes(request : DataRequest)
+	{
+		let notesFiles = new Map<DatatypeCode, string>();
+		for (let code of request.datatypeCodes) {
+			notesFiles.set(code, await DatasetBuilder.getCodeNotes(<string>(request.datatypeDirs.get(code))));
+		}
+		
+		return notesFiles;
+	}
+	
+	//Retrieves the notes file in the directory for the specified datatype
+	public static async getCodeNotes(datatypeDir : string)
+	{
+		//Find the "notes" text file in the specified source directory
+		let matches : string[] = await EnvironmentUtil.glob(path.join(datatypeDir, '*_Notes_*.txt'));
+		
+		//We should have exactly one matching file
+		if (matches.length != 1) {
+			throw new Error('failed to find notes file in source directory "' + datatypeDir + '"');
+		}
+		
+		return matches[0];
 	}
 	
 	//Loads all of the CSV data files in the directory for the specified datatype into a database table
