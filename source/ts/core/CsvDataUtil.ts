@@ -55,31 +55,7 @@ export class CsvDataUtil
 				transformed = transformed.replace('Year Month Day Hour Minutes in YYYY,MM,DD,HH24,MI format in Local standard time', 'Year,Month,Day,Hour,Minute');
 				
 				//If there are extraneous lines of text (e.g. notes) before or after the actual data, discard them
-				//(Note that we need to be careful here to avoid accidentally discarding the header row)
-				let lines = transformed.split('\n');
-				let rowLength = mathjs.mode(lines.map((line : string) => { return line.length; }));
-				transformed = lines.filter((line : string, index : number) =>
-				{
-					//Determine if this is a data row
-					if (line.length == rowLength) {
-						return true;
-					}
-					
-					//Determine if this is the header row
-					if (index < lines.length-1 && lines[index+1].length == rowLength)
-					{
-						//If the line immediately preceding a data row does not have the correct comma count, it's not a header
-						//(Substring counting technique adapted from here: <https://stackoverflow.com/a/4009768>)
-						let dataCommas = (lines[index+1].match(/,/g) || []).length;
-						let lineCommas = (line.match(/,/g) || []).length;
-						if (dataCommas == lineCommas) {
-							return true;
-						}
-					}
-					
-					return false;
-				})
-				.join('\n');
+				transformed = CsvDataUtil.stripExtraneousLines(transformed, true);
 				
 				return transformed;
 			};
@@ -154,5 +130,39 @@ export class CsvDataUtil
 				}
 			});
 		});
+	}
+	
+	//Determines the length of a row of data in a BOM-format CSV file
+	private static dataRowLength(lines : string[]) : number {
+		return mathjs.mode(lines.map((line : string) => { return line.length; }));
+	}
+	
+	//Strips extraneous lines of text (e.g. notes) before or after the actual data in BOM-format CSV file
+	private static stripExtraneousLines(csvData : string, keepHeader : boolean)
+	{
+		let lines = csvData.split('\n');
+		let rowLength = CsvDataUtil.dataRowLength(lines);
+		return lines.filter((line : string, index : number) =>
+		{
+			//Determine if this is a data row
+			if (line.length == rowLength) {
+				return true;
+			}
+			
+			//If we are keeping the header, determine if this is the header row
+			if (keepHeader === true && index < lines.length-1 && lines[index+1].length == rowLength)
+			{
+				//If the line immediately preceding a data row does not have the correct comma count, it's not a header
+				//(Substring counting technique adapted from here: <https://stackoverflow.com/a/4009768>)
+				let dataCommas = (lines[index+1].match(/,/g) || []).length;
+				let lineCommas = (line.match(/,/g) || []).length;
+				if (dataCommas == lineCommas) {
+					return true;
+				}
+			}
+			
+			return false;
+		})
+		.join('\n');
 	}
 }
