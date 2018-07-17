@@ -57,6 +57,12 @@ export abstract class ReportDisplayBase extends UIState
 						
 						h1, h2 { font-weight: normal; }
 						
+						p.error
+						{
+							font-weight: bold;
+							color: red;
+						}
+						
 						ul.report-stations-list + h2 {
 							margin-top: 2em;
 						}

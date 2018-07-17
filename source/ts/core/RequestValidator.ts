@@ -4,6 +4,8 @@ import { EventEmitter } from 'events';
 import { CsvDataUtil } from './CsvDataUtil';
 import { DatabaseUtil, DatabaseHandle } from './DatabaseUtil';
 import { DataRequest } from './DataRequest';
+import { DatasetBuilder } from './DatasetBuilder';
+import { DatasetGranularity } from './DatasetGranularities';
 import { DatatypeCode, DatatypeCodeHelper } from './DatatypeCodes';
 import { EnvironmentUtil } from './EnvironmentUtil';
 
@@ -30,12 +32,14 @@ export class ValidationReport
 	public valid : boolean;
 	public request : DataRequest;
 	public details : ValidationReportItem[];
+	public granularities : Map<DatatypeCode, DatasetGranularity>;
 	
-	public constructor(valid : boolean, request : DataRequest, details : ValidationReportItem[])
+	public constructor(valid : boolean, request : DataRequest, details : ValidationReportItem[], granularities : Map<DatatypeCode, DatasetGranularity>)
 	{
 		this.valid = valid;
 		this.request = request;
 		this.details = details;
+		this.granularities = granularities;
 	}
 }
 
@@ -64,9 +68,13 @@ export class RequestValidator
 			//Run all of the queries
 			let results : ValidationReportItem[] = await Promise.all(queries);
 			
-			//The request is only valid if all requested combinations are supported
-			let valid = (results.filter((r) => { return r.supported == true; })).length == results.length;
-			let report = new ValidationReport(valid, request, results);
+			//Determine the granularities of each of the datatypes
+			let granularities = await DatasetBuilder.detectGranularities(request);
+			let uniqueGranularities = new Set<DatasetGranularity>(granularities.values());
+			
+			//The request is only valid if all requested combinations are supported and have the same granularity
+			let valid = uniqueGranularities.size == 1 && (results.filter((r) => { return r.supported == true; })).length == results.length;
+			let report = new ValidationReport(valid, request, results, granularities);
 			
 			//Close the database and resolve the Promise with the report
 			db.close();
@@ -77,32 +85,6 @@ export class RequestValidator
 			//Propagate any errors
 			throw err;
 		}
-	}
-	
-	private static retrieveSupportedYears(db : DatabaseHandle, request : DataRequest)
-	{
-		return new Promise((resolve : Function, reject : Function) =>
-		{
-			//Build the list of queries to determine if all stations and datatype combinations are supported
-			let queries : Promise<ValidationReportItem>[] = [];
-			request.stations.forEach((station : number) =>
-			{
-				request.datatypeCodes.forEach((code : DatatypeCode) => {
-					queries.push(RequestValidator.validationQuery(db, station, code, request.startYear, request.endYear));
-				});
-			});
-			
-			//Run all of the queries
-			Promise.all(queries).then((results : ValidationReportItem[]) =>
-			{
-				//The request is only valid if all requested combinations are supported
-				let valid = (results.filter((r) => { return r.supported == true; })).length == results.length;
-				resolve(new ValidationReport(valid, request, results));
-			})
-			.catch((err : Error) => {
-				reject(err);
-			});
-		});
 	}
 	
 	private static validationQuery(db : DatabaseHandle, station : number, datatypeCode : DatatypeCode, startYear : number, endYear : number)

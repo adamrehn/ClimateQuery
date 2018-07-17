@@ -1,3 +1,4 @@
+import { DatasetGranularity } from './DatasetGranularities';
 import { DatatypeCode } from './DatatypeCodes';
 import { DatasetManager } from './DatasetManager';
 
@@ -10,8 +11,9 @@ export class Query
 	public parameters : Map<string,Object>;
 	public parameterTypes : Map<string,string>;
 	public requiredFields : DatatypeCode[];
+	public requiredGranularity : DatasetGranularity;
 	
-	public constructor(name : string, selectClause : string, whereClauses : string[], parameters : Map<string,Object>, parameterTypes : Map<string,string>, requiredFields : DatatypeCode[])
+	public constructor(name : string, selectClause : string, whereClauses : string[], parameters : Map<string,Object>, parameterTypes : Map<string,string>, requiredFields : DatatypeCode[], requiredGranularity : DatasetGranularity)
 	{
 		this.name           = name;
 		this.selectClause   = selectClause;
@@ -20,6 +22,7 @@ export class Query
 		this.parameters     = parameters;
 		this.parameterTypes = parameterTypes;
 		this.requiredFields = requiredFields;
+		this.requiredGranularity = requiredGranularity;
 	}
 	
 	public clone()
@@ -31,7 +34,8 @@ export class Query
 			this.whereClauses.slice(),
 			new Map<string,Object>(this.parameters),
 			new Map<string,string>(this.parameterTypes),
-			this.requiredFields.slice()
+			this.requiredFields.slice(),
+			this.requiredGranularity
 		);
 	}
 	

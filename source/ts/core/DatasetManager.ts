@@ -9,6 +9,7 @@ import { DataRequest } from './DataRequest';
 import { Dataset } from './Dataset'
 import { DatasetBuilder } from './DatasetBuilder';
 import { DatatypeCode, DatatypeCodeHelper } from './DatatypeCodes';
+import { DatasetGranularity, DatasetGranularityHelper } from './DatasetGranularities';
 import { SummaryWriter } from './SummaryWriter'
 
 //Wrap fs.unlink() in a Promise-based interface
@@ -177,6 +178,9 @@ export class DatasetManager
 			entry.timestamp = timestamp;
 			entry.database = this.generateDatabaseFilename(datasetName, timestamp);
 			
+			//Determine the dataset granularity (ensuring we only have a single granularity)
+			entry.granularity = await DatasetBuilder.detectSingleGranularity(request);
+			
 			//Attempt to create the dataset
 			let builder = new DatasetBuilder();
 			builder.on('progress', progressCallback);
@@ -195,7 +199,7 @@ export class DatasetManager
 			
 			//Compute the percentage of entries that have values present
 			let percentPresent = ((totalPresent / totalRows) * 100.0);
-			entry.present = percentPresent;
+			entry.present = (isNaN(percentPresent) == true) ? 0 : percentPresent;
 			
 			//Close the database
 			db.close();
@@ -317,7 +321,16 @@ export class DatasetManager
 	{
 		return new Promise((resolve : Function, reject : Function) =>
 		{
-			let json = JSON.stringify(this.datasets, null, 4);
+			//Transform the granularity enum values for all datasets to their string representations
+			let transformed = this.datasets.map((dataset : Dataset) =>
+			{
+				let d = JSON.parse(JSON.stringify(dataset))
+				d['granularity'] = DatasetGranularityHelper.toString(dataset.granularity);
+				return d;
+			});
+			
+			//Attempt to write the index to file
+			let json = JSON.stringify(transformed, null, 4);
 			fs.writeFile(this.indexFilePath(), json, (err : Error) =>
 			{
 				if (err) {
@@ -413,12 +426,19 @@ export class DatasetManager
 					return;
 				}
 				
+				//Verify that the index entry contains a valid granularity
+				let granularity = DatasetGranularityHelper.fromString(candidateEntry['granularity']);
+				if (granularity == DatasetGranularity.Unknown) {
+					return;
+				}
+				
 				//If we reach this point, the entry passed all validation checks, and we can add it to the list
 				let entry = new Dataset();
 				entry.name = <string>candidateEntry['name'];
 				entry.timestamp = <number>candidateEntry['timestamp'];
 				entry.database = <string>candidateEntry['database'];
 				entry.present = <number>candidateEntry['present'];
+				entry.granularity = granularity;
 				entry.request = new DataRequest(
 					candidateEntry['request']['stations'],
 					candidateEntry['request']['datatypeCodes'],

@@ -129,7 +129,7 @@ export class QueryFormState extends UIState
 	private createAggregationDropdown()
 	{
 		//Create the dropdown itself
-		let fields = DatasetBuilder.commonFields();
+		let fields = DatasetBuilder.commonFields(this.dataset.granularity);
 		let dropdown = $(document.createElement('select'));
 		fields.forEach((field : string) =>
 		{

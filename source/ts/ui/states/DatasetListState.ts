@@ -1,6 +1,7 @@
 import { UIState } from '../UIState'
 import { Dataset } from '../../core/Dataset'
 import { DatatypeCodeHelper } from '../../core/DatatypeCodes'
+import { DatasetGranularityHelper } from '../../core/DatasetGranularities';
 import { PresenceReportState } from './PresenceReportState'
 import { CreateDatasetState } from './CreateDatasetState'
 import { ChooseQueryState } from './ChooseQueryState'
@@ -111,7 +112,7 @@ export class DatasetListState extends UIState
 			datasetCreated.text('Created ' + dateFormat(timestamp, 'dddd dS mmmm yyyy') + ' at ' + dateFormat(timestamp, 'h:MM tt'));
 			let datasetDatatypes = $(document.createElement('span')).addClass('datatypes');
 			let datatypes = this.formatList(dataset.request.datatypeCodes.map(DatatypeCodeHelper.toString));
-			datasetDatatypes.text(datatypes + ' from ' + dataset.request.startYear + ' to ' + dataset.request.endYear);
+			datasetDatatypes.text(DatasetGranularityHelper.toString(dataset.granularity) + ' ' + datatypes + ' from ' + dataset.request.startYear + ' to ' + dataset.request.endYear);
 			let datasetPresent = $(document.createElement('span')).addClass('present').text(numeral(dataset.present).format('00.00') + '% data present');
 			if (dataset.present < 75.0)
 			{

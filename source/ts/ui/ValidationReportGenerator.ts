@@ -1,4 +1,5 @@
 import { DatatypeCode, DatatypeCodeHelper } from '../core/DatatypeCodes'
+import { DatasetGranularityHelper, DatasetGranularity } from '../core/DatasetGranularities';
 import { ValidationReport, ValidationReportItem } from '../core/RequestValidator'
 import { DataRequest } from '../core/DataRequest'
 import * as numeral from 'numeral';
@@ -23,14 +24,20 @@ export class ValidationReportGenerator
 			<p><strong>End Year:</strong> ${validationResults.request.endYear}</p>
 		`);
 		
-		//Append the list of request datatypes
-		report.html(report.html() + `<p><strong>Measurements:</strong></p>`);
+		//Append the list of request datatypes and their granularities
+		report.html(report.html() + `<p><strong>Measurements and granularities:</strong></p>`);
 		let datatypesList = $(document.createElement('ul'));
 		let dtypeListItems = validationResults.request.datatypeCodes.map((code : DatatypeCode) => {
-			return $(document.createElement('li')).text(DatatypeCodeHelper.toString(code));
+			return $(document.createElement('li')).html(DatatypeCodeHelper.toString(code) + ' (<strong>Granularity:</strong> ' + DatasetGranularityHelper.toString(<DatasetGranularity>validationResults.granularities.get(code)) + ')');
 		});
 		datatypesList.append(...dtypeListItems);
 		report.append(datatypesList);
+		
+		//If multiple granularities were present, flag this
+		let uniqueGranularities = new Set<DatasetGranularity>(validationResults.granularities.values());
+		if (uniqueGranularities.size > 1) {
+			report.html(report.html() + `<p class="error">Multiple granularities detected! A dataset can only have a single granularity.</p>`);
+		}
 		
 		//Append the list of request stations
 		report.html(report.html() + `<p><strong>Stations:</strong></p>`);

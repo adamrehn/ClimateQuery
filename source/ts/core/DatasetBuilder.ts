@@ -5,6 +5,7 @@ import { CsvDataUtil } from './CsvDataUtil';
 import { DatabaseUtil, DatabaseHandle } from './DatabaseUtil';
 import { DataRequest } from './DataRequest';
 import { DatatypeCode } from './DatatypeCodes';
+import { DatasetGranularity, DatasetGranularityHelper } from './DatasetGranularities';
 import { EnvironmentUtil } from './EnvironmentUtil';
 
 class ProgressDetails
@@ -16,8 +17,71 @@ class ProgressDetails
 export class DatasetBuilder
 {
 	//Lists the fields that are common to all datatypes
-	public static commonFields() {
-		return ['Station', 'Year', 'Month', 'Day'];
+	public static commonFields(granularity : DatasetGranularity)
+	{
+		switch (granularity)
+		{
+			case DatasetGranularity.Year:
+				return ['Station', 'Year'];
+			
+			case DatasetGranularity.Month:
+				return ['Station', 'Year', 'Month'];
+			
+			case DatasetGranularity.Day:
+				return ['Station', 'Year', 'Month', 'Day'];
+			
+			case DatasetGranularity.Hour:
+				return ['Station', 'Year', 'Month', 'Day', 'Hour'];
+			
+			case DatasetGranularity.Minute:
+				return ['Station', 'Year', 'Month', 'Day', 'Hour', 'Minute'];
+			
+			case DatasetGranularity.Second:
+				return ['Station', 'Year', 'Month', 'Day', 'Hour', 'Minute', 'Second'];
+			
+			case DatasetGranularity.Unknown:
+				return ['Station'];
+		}
+	}
+	
+	//Determines the overall granularity of a dataset request, throwing an error if multiple granularities are detected
+	public static async detectSingleGranularity(request : DataRequest, dataFiles? : Map<DatatypeCode, string[]>)
+	{
+		//Compute the set of unique granularities
+		let granularities = await DatasetBuilder.detectGranularities(request, dataFiles);
+		let uniqueGranularities = new Set<DatasetGranularity>(granularities.values());
+		
+		//Ensure we only have one granularity
+		if (uniqueGranularities.size > 1) {
+			throw new Error('multiple granularities detected in dataset input files');
+		}
+		
+		return [...uniqueGranularities.values()][0];
+	}
+	
+	//Determines the granularity of each of the datatypes in a dataset request
+	public static async detectGranularities(request : DataRequest, dataFiles? : Map<DatatypeCode, string[]>)
+	{
+		//If a set of data files were not supplied, compute the list of files
+		if (dataFiles === undefined) {
+			dataFiles = await DatasetBuilder.getRequestDataFiles(request);
+		}
+		
+		//Iterate over the datatypes and determine the granularity for each
+		let granularities = new Map<DatatypeCode, DatasetGranularity>();
+		for (let code of request.datatypeCodes)
+		{
+			//Parse the first CSV file to retrieve the column names
+			let firstFile : string[][] = await CsvDataUtil.parseBOMCsv((<string[]>dataFiles.get(code))[0]);
+			
+			//Remap the column names to more SQL-friendly versions
+			DatabaseUtil.renameFields(firstFile, DatasetBuilder.fieldReplacements());
+			
+			//Detect the granularity based on the transformed column names
+			granularities.set(code, DatasetGranularityHelper.detectGranularity(firstFile[0]));
+		}
+		
+		return granularities
 	}
 	
 	private events : EventEmitter;
@@ -43,12 +107,13 @@ export class DatasetBuilder
 			//Retrieve the list of CSV data files for each of the requested datatype codes
 			//and determine the total number of CSV data files to be parsed
 			let totalDataFiles = 0;
-			let dataFiles = new Map<DatatypeCode, string[]>();
-			for (let code of request.datatypeCodes)
-			{
-				dataFiles.set(code, await this.getDataFiles(code, <string>(request.datatypeDirs.get(code))));
+			let dataFiles = await DatasetBuilder.getRequestDataFiles(request);
+			for (let code of request.datatypeCodes) {
 				totalDataFiles += (<string[]>(dataFiles.get(code))).length;
 			}
+			
+			//Determine the dataset granularity (ensuring we only have a single granularity)
+			let granularity = await DatasetBuilder.detectSingleGranularity(request, dataFiles);
 			
 			//Create the progress object that we will update throughout the build process
 			let datasetProgress = new ProgressDetails();
@@ -64,7 +129,7 @@ export class DatasetBuilder
 			this.events.emit('progress', new BuildProgress(BuildPhase.Merging, 0, 0));
 			
 			//Merge the tables for each of the datatypes into a single table
-			await this.mergeMultipleDatatypes(db, request.datatypeCodes);
+			await this.mergeMultipleDatatypes(db, request.datatypeCodes, granularity);
 			
 			//Emit the progress event to indicate that building completed
 			this.events.emit('progress', new BuildProgress(BuildPhase.Completed, 0, 0));
@@ -78,7 +143,7 @@ export class DatasetBuilder
 		}
 	}
 	
-	private fieldReplacements()
+	private static fieldReplacements()
 	{
 		return new Map<string,string>([
 			['dc',                                                                            'DC'],
@@ -108,8 +173,19 @@ export class DatasetBuilder
 		return 't' + datatypeCode;
 	}
 	
+	//Retrieves the list of CSV data files in the directory for the all datatypes in a dataset request
+	private static async getRequestDataFiles(request : DataRequest)
+	{
+		let dataFiles = new Map<DatatypeCode, string[]>();
+		for (let code of request.datatypeCodes) {
+			dataFiles.set(code, await DatasetBuilder.getCodeDataFiles(code, <string>(request.datatypeDirs.get(code))));
+		}
+		
+		return dataFiles;
+	}
+	
 	//Retrieves the list of CSV data files in the directory for the specified datatype
-	private async getDataFiles(datatypeCode : DatatypeCode, datatypeDir : string)
+	private static async getCodeDataFiles(datatypeCode : DatatypeCode, datatypeDir : string)
 	{
 		//Retrieve the list of CSV data files
 		let matches : string[] = await EnvironmentUtil.glob(path.join(datatypeDir, '*_Data_*.txt'));
@@ -131,7 +207,7 @@ export class DatasetBuilder
 			let firstFile : string[][] = await CsvDataUtil.parseBOMCsv(csvFiles[0]);
 			
 			//Remap the column names to more SQL-friendly versions
-			DatabaseUtil.renameFields(firstFile, this.fieldReplacements());
+			DatabaseUtil.renameFields(firstFile, DatasetBuilder.fieldReplacements());
 			
 			//Keep track of the column indices for the "Station" and "Year" fields
 			let headerRow = firstFile.slice(0, 1);
@@ -181,7 +257,7 @@ export class DatasetBuilder
 	}
 	
 	//Recursively merges tables for multiple datatypes
-	private async mergeMultipleDatatypes(db : DatabaseHandle, datatypeCodes : DatatypeCode[], isInsideRecursion? : boolean)
+	private async mergeMultipleDatatypes(db : DatabaseHandle, datatypeCodes : DatatypeCode[], granularity : DatasetGranularity, isInsideRecursion? : boolean)
 	{
 		try
 		{
@@ -198,7 +274,7 @@ export class DatasetBuilder
 				var tableLeft = this.tableName(datatypeCodes[0]);
 				var tableRight = this.tableName(datatypeCodes[1]);
 				var tableResult = this.tableName('mergetemp');
-				await DatabaseUtil.joinTables(db, tableLeft, tableRight, tableResult, DatasetBuilder.commonFields(), false);
+				await DatabaseUtil.joinTables(db, tableLeft, tableRight, tableResult, DatasetBuilder.commonFields(granularity), false);
 				
 				//Drop the original tables
 				await DatabaseUtil.dropTable(db, tableLeft),
@@ -210,13 +286,13 @@ export class DatasetBuilder
 			else
 			{
 				//Merge recursively until we have only one table
-				await this.mergeMultipleDatatypes(db, datatypeCodes.slice(0,2), true);
-				await this.mergeMultipleDatatypes(db, datatypeCodes.slice(1), true);
+				await this.mergeMultipleDatatypes(db, datatypeCodes.slice(0,2), granularity, true);
+				await this.mergeMultipleDatatypes(db, datatypeCodes.slice(1), granularity, true);
 			}
 			
 			//If this is the root call to this method and we had more than one datatype, finalise the merge
 			if (!(isInsideRecursion === true) && datatypeCodes.length > 1) {
-				await this.mergeMultipleDatatypes(db, datatypeCodes.slice(-1), true);
+				await this.mergeMultipleDatatypes(db, datatypeCodes.slice(-1), granularity, true);
 			}
 			
 			return true;

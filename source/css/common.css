@@ -393,6 +393,12 @@ input[type="number"]::-webkit-inner-spin-button
 	font-weight: normal;
 }
 
+.report p.error
+{
+	font-weight: bold;
+	color: red;
+}
+
 .report h2,
 .report p,
 .report ul {

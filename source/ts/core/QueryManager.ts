@@ -1,3 +1,4 @@
+import { DatasetGranularity } from './DatasetGranularities';
 import { DatatypeCode } from './DatatypeCodes';
 import { Dataset } from './Dataset';
 import { Query } from './Query';
@@ -18,7 +19,8 @@ export class QueryManager
 				[ 'Rainfall != ""' ],
 				new Map<string,Object>(),
 				new Map<string,string>(),
-				[ DatatypeCode.Rainfall ]
+				[ DatatypeCode.Rainfall ],
+				DatasetGranularity.Day
 			),
 			
 			new Query(
@@ -27,7 +29,8 @@ export class QueryManager
 				[ 'Rainfall != ""' ],
 				new Map<string,Object>(),
 				new Map<string,string>(),
-				[ DatatypeCode.Rainfall ]
+				[ DatatypeCode.Rainfall ],
+				DatasetGranularity.Day
 			),
 			
 			new Query(
@@ -39,7 +42,8 @@ export class QueryManager
 				],
 				new Map<string,Object>(),
 				new Map<string,string>(),
-				[ DatatypeCode.Rainfall ]
+				[ DatatypeCode.Rainfall ],
+				DatasetGranularity.Day
 			),
 			
 			new Query(
@@ -51,7 +55,8 @@ export class QueryManager
 				],
 				new Map<string,Object>([[ '$threshold', 0.0 ]]),
 				new Map<string,string>([[ '$threshold', 'number' ]]),
-				[ DatatypeCode.Rainfall ]
+				[ DatatypeCode.Rainfall ],
+				DatasetGranularity.Day
 			),
 			
 			
@@ -63,7 +68,8 @@ export class QueryManager
 				[ 'MaxTemp != ""' ],
 				new Map<string,Object>(),
 				new Map<string,string>(),
-				[ DatatypeCode.MinMaxMeanTemperature ]
+				[ DatatypeCode.MinMaxMeanTemperature ],
+				DatasetGranularity.Day
 			),
 			
 			new Query(
@@ -72,7 +78,8 @@ export class QueryManager
 				[ 'MinTemp != ""' ],
 				new Map<string,Object>(),
 				new Map<string,string>(),
-				[ DatatypeCode.MinMaxMeanTemperature ]
+				[ DatatypeCode.MinMaxMeanTemperature ],
+				DatasetGranularity.Day
 			),
 			
 			new Query(
@@ -84,7 +91,8 @@ export class QueryManager
 				],
 				new Map<string,Object>([[ '$threshold', 0.0 ]]),
 				new Map<string,string>([[ '$threshold', 'number' ]]),
-				[ DatatypeCode.MinMaxMeanTemperature ]
+				[ DatatypeCode.MinMaxMeanTemperature ],
+				DatasetGranularity.Day
 			),
 			
 			new Query(
@@ -96,7 +104,8 @@ export class QueryManager
 				],
 				new Map<string,Object>([[ '$threshold', 0.0 ]]),
 				new Map<string,string>([[ '$threshold', 'number' ]]),
-				[ DatatypeCode.MinMaxMeanTemperature ]
+				[ DatatypeCode.MinMaxMeanTemperature ],
+				DatasetGranularity.Day
 			),
 			
 			new Query(
@@ -116,7 +125,8 @@ export class QueryManager
 					['$lowerBound', 'number'],
 					['$upperBound', 'number']
 				]),
-				[ DatatypeCode.MinMaxMeanTemperature ]
+				[ DatatypeCode.MinMaxMeanTemperature ],
+				DatasetGranularity.Day
 			),
 			
 			
@@ -128,7 +138,8 @@ export class QueryManager
 				[ 'SolarExposure != ""' ],
 				new Map<string,Object>(),
 				new Map<string,string>(),
-				[ DatatypeCode.SolarExposure ]
+				[ DatatypeCode.SolarExposure ],
+				DatasetGranularity.Day
 			),
 			
 			new Query(
@@ -140,7 +151,8 @@ export class QueryManager
 				],
 				new Map<string,Object>([[ '$threshold', 0.0 ]]),
 				new Map<string,string>([[ '$threshold', 'number' ]]),
-				[ DatatypeCode.SolarExposure ]
+				[ DatatypeCode.SolarExposure ],
+				DatasetGranularity.Day
 			),
 			
 			new Query(
@@ -152,7 +164,8 @@ export class QueryManager
 				],
 				new Map<string,Object>([[ '$threshold', 0.0 ]]),
 				new Map<string,string>([[ '$threshold', 'number' ]]),
-				[ DatatypeCode.SolarExposure ]
+				[ DatatypeCode.SolarExposure ],
+				DatasetGranularity.Day
 			),
 			
 			new Query(
@@ -171,7 +184,8 @@ export class QueryManager
 					['$lowerBound', 'number'],
 					['$upperBound', 'number']
 				]),
-				[ DatatypeCode.SolarExposure ]
+				[ DatatypeCode.SolarExposure ],
+				DatasetGranularity.Day
 			)
 			
 		];
@@ -180,12 +194,12 @@ export class QueryManager
 	//Retrieves the list of queries that are supported for the specified dataset
 	public getSupportedQueries(datasetDetails : Dataset) : Query[]
 	{
-		//Filter queries to keep only those whose requirements are satisfied by request.datatypeCodes
+		//Filter queries to keep only those whose requirements are satisfied by the dataset's datatypes and granularity
 		let datasetFields = new Set<DatatypeCode>(datasetDetails.request.datatypeCodes);
 		return this.queries.filter((query : Query) =>
 		{
 			let intersection = query.requiredFields.filter((field : DatatypeCode) => { return datasetFields.has(field); });
-			return (intersection.length == query.requiredFields.length);
+			return (intersection.length == query.requiredFields.length && query.requiredGranularity == datasetDetails.granularity);
 		});
 	}
 }
