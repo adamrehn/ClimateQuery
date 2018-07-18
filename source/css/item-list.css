@@ -1,0 +1,54 @@
+ul.selection-list, ul.selection-list li
+{
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+ul.selection-list li
+{
+	padding: 1.5em 1em;
+	text-align: center;
+	font-size: 1.25em;
+}
+
+ul.selection-list li, ul.selection-list li span {
+	cursor: pointer;
+}
+
+ul.selection-list li:hover, ul.selection-list li:nth-child(odd):hover {
+	background-color: #00aeef;
+}
+
+ul.selection-list li:nth-child(odd) {
+	background-color: #f7f7f7;
+}
+
+ul.selection-list li span
+{
+	font-size: 0.6em;
+	line-height: 1.5em;
+	display: block;
+	color: rgba(0,0,0,0.5);
+}
+
+ul.selection-list li .name
+{
+	padding-bottom: 0.5em;
+	line-height: 1em;
+	font-size: 1em;
+	color: #00aeef;
+}
+
+ul.selection-list li:hover span {
+	color: #fff;
+}
+
+.empty-list
+{
+	color: rgba(0,0,0,0.75);
+	text-align: center;
+	padding-top: 2em;
+	font-size: 0.8em;
+	display: block;
+}

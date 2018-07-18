@@ -380,6 +380,12 @@ input[type="number"]::-webkit-inner-spin-button
 	padding-bottom: 0.5em;
 }
 
+button.button-left, .state > *:last-child > button.button-left
+{
+	margin-left: 0;
+	float: left;
+}
+
 
 /* VALIDATION REPORT AND DATA PRESENCE REPORT STYLES */
 

@@ -5,6 +5,7 @@ import { DatasetGranularityHelper } from '../../core/DatasetGranularities';
 import { PresenceReportState } from './PresenceReportState'
 import { CreateDatasetState } from './CreateDatasetState'
 import { ChooseQueryState } from './ChooseQueryState'
+import { ChoosePreprocessingToolState } from './ChoosePreprocessingToolState';
 import * as numeral from 'numeral';
 import { remote } from 'electron'
 import * as $ from 'jquery';
@@ -27,6 +28,7 @@ export class DatasetListState extends UIState
 	private exportOverlay! : JQuery<HTMLElement>;
 	private noDatasetsMessage! : JQuery<HTMLElement>;
 	private createButton! : JQuery<HTMLElement>;
+	private preprocessingToolsButton! : JQuery<HTMLElement>;
 	private defaultErrorHandler! : (err:Error)=>void;
 	
 	public onShow(...args: any[]) : void {
@@ -57,6 +59,16 @@ export class DatasetListState extends UIState
 		this.noDatasetsMessage.hide();
 		this.listWrapper.append(this.noDatasetsMessage);
 		
+		//Create the "data preprocessing tools" button and wrap it in a <div>
+		this.preprocessingToolsButton = $(document.createElement('button')).addClass('blue');
+		this.preprocessingToolsButton.text('Data Preprocessing Tools');
+		this.preprocessingToolsButton.addClass(['preprocessingTools', 'button-left']);
+		this.preprocessingToolsButton.click(() => {
+			this.stateTransition.setState(ChoosePreprocessingToolState.identifier());
+		});
+		let buttonWrapper = $(document.createElement('div')).addClass('button-wrapper');
+		buttonWrapper.append(this.preprocessingToolsButton);
+		
 		//Create the "new dataset" button and wrap it in a <div>
 		this.createButton = $(document.createElement('button')).addClass('blue');
 		this.createButton.text('Create new dataset');
@@ -64,7 +76,6 @@ export class DatasetListState extends UIState
 		this.createButton.click(() => {
 			this.stateTransition.setState(CreateDatasetState.identifier());
 		});
-		let buttonWrapper = $(document.createElement('div')).addClass('button-wrapper');
 		buttonWrapper.append(this.createButton);
 		this.root.append(buttonWrapper);
 	}

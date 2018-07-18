@@ -18,6 +18,7 @@ import { PresenceReportState } from './states/PresenceReportState'
 import { BuildingDatasetState } from './states/BuildingDatasetState'
 import { ChooseQueryState } from './states/ChooseQueryState'
 import { QueryFormState } from './states/QueryFormState'
+import { ChoosePreprocessingToolState } from './states/ChoosePreprocessingToolState';
 
 export class UIStateManager implements UIStateTransitionHandler, UIDialogProvider, UIOverlayProvider, UIErrorHandler, UILoadingIconProvider
 {
@@ -47,6 +48,7 @@ export class UIStateManager implements UIStateTransitionHandler, UIDialogProvide
 		this.states.set(BuildingDatasetState.identifier(), new BuildingDatasetState());
 		this.states.set(ChooseQueryState.identifier(), new ChooseQueryState());
 		this.states.set(QueryFormState.identifier(), new QueryFormState());
+		this.states.set(ChoosePreprocessingToolState.identifier(), new ChoosePreprocessingToolState());
 		
 		//Activate our default "loading" state, which doesn't require a controller
 		this.setState(this.loadingState);

@@ -4,13 +4,16 @@ import { DatasetManager } from './DatasetManager'
 import { Dataset } from './Dataset'
 import { DatatypeCode, DatatypeCodeHelper } from './DatatypeCodes'
 import { QueryManager } from './QueryManager'
+import { PreprocessingToolManager } from './PreprocessingToolManager';
 import { Query } from './Query'
+import { PreprocessingTool } from './PreprocessingTool';
 import { RequestValidator } from './RequestValidator'
 
 export class ApplicationController
 {
 	private datasetManager! : DatasetManager;
 	private queryManager : QueryManager;
+	private toolManager : PreprocessingToolManager;
 	
 	//Wraps instance creation in a Promise interface
 	public static async createController()
@@ -29,8 +32,10 @@ export class ApplicationController
 		}
 	}
 	
-	private constructor() {
+	private constructor()
+	{
 		this.queryManager = new QueryManager();
+		this.toolManager = new PreprocessingToolManager();
 	}
 	
 	//Returns the dataset manager instance
@@ -77,5 +82,13 @@ export class ApplicationController
 	//Runs the supplied query on the specified dataset and exports the results to a CSV file
 	public exportQueryResult(entryIndex : number, query : Query, csvFile : string) {
 		return query.exportAsCsv(this.datasetManager, entryIndex, csvFile);
+	}
+	
+	//Lists the available preprocessing tools
+	public listPreprocessingTools()
+	{
+		return new Promise<PreprocessingTool[]>((resolve : Function, reject : Function) => {
+			resolve(this.toolManager.getPreprocessingTools());
+		});
 	}
 }

@@ -53,7 +53,7 @@ export class ChooseQueryState extends UIState
 		
 		//Create the <ul> to hold the list of queries and wrap it in a <div>
 		this.listRoot = $(document.createElement('ul'));
-		this.listRoot.addClass('queries');
+		this.listRoot.addClass(['queries', 'selection-list']);
 		let listWrapper = $(document.createElement('div')).addClass('list-wrapper');
 		listWrapper.append(this.listRoot);
 		this.root.append(listWrapper);
@@ -61,7 +61,7 @@ export class ChooseQueryState extends UIState
 		//Create a message for when there are no datasets to display
 		this.noQueriesMessage = $(document.createElement('em'));
 		this.noQueriesMessage.text('There are no supported queries that can be applied to the selected dataset.');
-		this.noQueriesMessage.addClass('no-queries');
+		this.noQueriesMessage.addClass(['no-queries', 'empty-list']);
 		this.noQueriesMessage.hide();
 		listWrapper.append(this.noQueriesMessage);
 		
