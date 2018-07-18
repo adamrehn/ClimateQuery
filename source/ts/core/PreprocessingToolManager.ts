@@ -1,4 +1,5 @@
 import { PreprocessingTool } from './PreprocessingTool';
+import { MergeDataDirectoriesTool } from './tools/MergeDataDirectoriesTool';
 
 export class PreprocessingToolManager
 {
@@ -6,7 +7,11 @@ export class PreprocessingToolManager
 	
 	public constructor()
 	{
-		this.tools = [];
+		this.tools = [
+			
+			new MergeDataDirectoriesTool()
+			
+		];
 	}
 	
 	//Retrieves the list of available preprocessing tools

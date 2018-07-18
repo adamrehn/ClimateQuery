@@ -1,5 +1,6 @@
 import { UIState } from '../UIState'
 import { PreprocessingTool } from '../../core/PreprocessingTool';
+import { PreprocessingToolFormState } from './PreprocessingToolFormState';
 import { DatasetListState } from './DatasetListState'
 import * as $ from 'jquery';
 
@@ -77,12 +78,14 @@ export class ChoosePreprocessingToolState extends UIState
 		{
 			//Create the list item and display the query name and SQL
 			let listItem = $(document.createElement('li'));
-			let nameDisplay = $(document.createElement('span')).addClass('name').text(tool.name);
-			let descriptionDisplay = $(document.createElement('span')).addClass('description').text(tool.descriptionShort);
+			let nameDisplay = $(document.createElement('span')).addClass('name').text(tool.name());
+			let descriptionDisplay = $(document.createElement('span')).addClass('description').text(tool.descriptionShort());
 			
 			//Wire up the event handler for the list item
-			//TODO
-						
+			listItem.click(() => {
+				this.stateTransition.setState(PreprocessingToolFormState.identifier(), tool);
+			});
+			
 			//Add the item to our list
 			listItem.append(nameDisplay, descriptionDisplay);
 			this.listRoot.append(listItem);

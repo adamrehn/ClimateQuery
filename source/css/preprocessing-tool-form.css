@@ -1,0 +1,13 @@
+#preprocessing-tool-form label {
+	font-weight: bold;
+}
+
+#preprocessing-tool-form .actions {
+	padding-top: 2em;
+}
+
+#preprocessing-tool-form .actions button
+{
+	display: inline-block;
+	margin: 0.5em;
+}

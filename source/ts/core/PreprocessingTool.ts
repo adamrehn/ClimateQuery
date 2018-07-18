@@ -1,34 +1,41 @@
-export class PreprocessingTool
+export abstract class PreprocessingTool
 {
-	public name : string;
-	public descriptionShort : string;
-	public descriptionLong : string;
 	public parameters : Map<string,Object>;
 	public parameterTypes : Map<string,string>;
+	protected parameterHooks : Map<string,()=>void>;
 	
-	public constructor(name : string, descriptionShort : string, descriptionLong : string, parameters : Map<string,Object>, parameterTypes : Map<string,string>)
+	constructor()
 	{
-		this.name             = name;
-		this.descriptionShort = descriptionShort;
-		this.descriptionLong  = descriptionLong;
-		this.parameters       = parameters;
-		this.parameterTypes   = parameterTypes;
+		this.parameters = new Map<string,Object>();
+		this.parameterTypes = new Map<string,string>();
+		this.parameterHooks = new Map<string,()=>void>();
 	}
 	
-	public clone()
-	{
-		//String deep-copy trick from: <https://stackoverflow.com/a/31733628>
-		return new PreprocessingTool(
-			(' ' + this.name).slice(1),
-			(' ' + this.descriptionShort).slice(1),
-			(' ' + this.descriptionLong).slice(1),
-			new Map<string,Object>(this.parameters),
-			new Map<string,string>(this.parameterTypes)
-		);
-	}
+	//Clones this object
+	public abstract clone() : PreprocessingTool;
+	
+	//Returns the name of this preprocessing tool
+	public abstract name() : string;
+	
+	//Returns the short description for this preprocessing tool
+	public abstract descriptionShort() : string;
+	
+	//Returns the full description for this preprocessing tool
+	public abstract descriptionLong() : string;
 	
 	//Sets the specified parameter to the supplied value
 	public setParameter(parameter : string, value : Object) {
 		this.parameters.set(parameter, value);
 	}
+	
+	//Validates the values of our input parameters
+	public abstract validate() : boolean;
+	
+	//Provides the list of custom actions for modifying parameters
+	public parameterActions() {
+		return this.parameterHooks;
+	}
+	
+	//Runs the tool using the previously set parameter values
+	public abstract async execute() : Promise<void>;
 }

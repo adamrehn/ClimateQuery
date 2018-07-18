@@ -2,9 +2,8 @@ import * as csv_stringify from 'csv-stringify';
 import * as csv_parse from 'csv-parse';
 import * as fs from 'fs';
 import * as mathjs from 'mathjs';
-import { DatatypeCode } from './DatatypeCodes';
 
-//Wrap fs.readFile() fs.writeFile() in a Promise-based interface
+//Wrap fs.readFile() and fs.writeFile() in a Promise-based interface
 require('util.promisify/shim')();
 import { promisify } from 'util';
 const readFile = promisify(fs.readFile);

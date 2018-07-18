@@ -278,7 +278,7 @@ input[type="number"]::-webkit-inner-spin-button
 
 .section-wrapper section
 {
-	flex: 1;
+	flex: 1 0;
 	padding: 1.5em;
 	min-width: 40%;
 }
@@ -333,14 +333,15 @@ input[type="number"]::-webkit-inner-spin-button
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
+	justify-content: space-around;
 }
 
 .section-wrapper section .multifield.forceblock {
 	display: block;
 }
 
-.section-wrapper section .multifield > * + * {
-	padding-left: 2.5em;
+.section-wrapper section .multifield > * {
+	padding: 0.5em;
 }
 
 .section-wrapper section .withlabel label
