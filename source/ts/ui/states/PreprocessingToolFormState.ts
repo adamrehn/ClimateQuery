@@ -224,6 +224,10 @@ export class PreprocessingToolFormState extends UIState
 		}
 	}
 	
+	private updateProgress(percentage : number) {
+		this.overlayProvider.showOverlay(`Running Data Preprocessing Tool, this may take some time... (${Math.floor(percentage)}%)`);
+	}
+	
 	private createForm() : void
 	{
 		//Create the root <div> element
@@ -266,8 +270,8 @@ export class PreprocessingToolFormState extends UIState
 		this.runButton.click(() =>
 		{
 			//Attempt to run the query and export the result
-			this.overlayProvider.showOverlay('Running Data Preprocessing Tool, this may take some time...');
-			this.tool.execute().then(() =>
+			this.updateProgress(0);
+			this.tool.execute(this.updateProgress.bind(this)).then(() =>
 			{
 				this.overlayProvider.hideOverlay();
 				this.dialogProvider.showMessage(`Successfully ran the "${this.tool.name()}" data preprocessing tool.`);

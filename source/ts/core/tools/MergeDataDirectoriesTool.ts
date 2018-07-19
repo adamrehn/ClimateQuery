@@ -111,7 +111,7 @@ export class MergeDataDirectoriesTool extends PreprocessingTool
 		return true;
 	}
 	
-	public async execute() : Promise<void>
+	public async execute(progressCallback : (percentage : number)=>void) : Promise<void>
 	{
 		try
 		{
@@ -139,12 +139,29 @@ export class MergeDataDirectoriesTool extends PreprocessingTool
 			await copyFile(notesFile, path.join(outputDir, 'MERGED_Notes_0000000.txt'));
 			
 			//Attempt to copy each of the data CSV files from our input directories to the output directory
+			let dirNum = 0;
 			for (let dir of inputDirs)
 			{
+				//Keep track of our directory-level progress
+				let dirProgress = (dirNum == 0) ? 0 : dirNum / inputDirs.length;
+				
+				//Iterate over the files in the directory
+				let fileNum = 0;
 				let dataFiles = await DatasetBuilder.getCodeDataFiles(dir);
-				for (let file of dataFiles) {
+				for (let file of dataFiles)
+				{
+					//Update our progress display
+					let fileProgress = ((fileNum+1) / dataFiles.length) * (1.0 / inputDirs.length);
+					let overallProgress = (dirProgress + fileProgress) * 100.0;
+					progressCallback(overallProgress);
+					
+					//Copy the file
 					await copyFile(file, path.join(outputDir, path.basename(dir) + '_' + path.basename(file)));
+					
+					fileNum++;
 				}
+				
+				dirNum++;
 			}
 		}
 		catch (err)

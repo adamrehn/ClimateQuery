@@ -37,5 +37,5 @@ export abstract class PreprocessingTool
 	}
 	
 	//Runs the tool using the previously set parameter values
-	public abstract async execute() : Promise<void>;
+	public abstract async execute(progressCallback : (percentage : number)=>void) : Promise<void>;
 }
