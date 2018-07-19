@@ -29,8 +29,7 @@ export class MergeDataDirectoriesTool extends PreprocessingTool
 	public clone() : PreprocessingTool
 	{
 		let cloned = new MergeDataDirectoriesTool();
-		cloned.parameters = new Map<string,Object>(this.parameters);
-		cloned.parameterTypes = new Map<string,string>(this.parameterTypes);
+		this.cloneParameters(cloned);
 		return cloned;
 	}
 	

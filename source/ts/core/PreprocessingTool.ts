@@ -11,6 +11,13 @@ export abstract class PreprocessingTool
 		this.parameterHooks = new Map<string,()=>void>();
 	}
 	
+	//Helper for derived class clone() implementations
+	protected cloneParameters(cloned : PreprocessingTool)
+	{
+		cloned.parameters = new Map<string,Object>(this.parameters);
+		cloned.parameterTypes = new Map<string,string>(this.parameterTypes);
+	}
+	
 	//Clones this object
 	public abstract clone() : PreprocessingTool;
 	
