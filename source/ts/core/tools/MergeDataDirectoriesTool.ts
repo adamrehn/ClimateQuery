@@ -1,3 +1,4 @@
+import { ApplicationController } from '../ApplicationController';
 import { PreprocessingTool } from '../PreprocessingTool';
 import { CsvDataUtil } from '../CsvDataUtil';
 import { DatasetBuilder } from '../DatasetBuilder';
@@ -110,7 +111,7 @@ export class MergeDataDirectoriesTool extends PreprocessingTool
 		return true;
 	}
 	
-	public async execute(progressCallback : (percentage : number)=>void) : Promise<void>
+	public async execute(controller : ApplicationController, progressCallback : (percentage : number)=>void) : Promise<void>
 	{
 		try
 		{

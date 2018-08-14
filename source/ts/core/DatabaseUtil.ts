@@ -1,6 +1,6 @@
 import { CsvDataUtil } from './CsvDataUtil';
+import { DataUtils } from './DataUtils';
 import * as sqlite3 from 'sqlite3';
-import * as fs from 'fs';
 
 //Imports for modules without type declarations
 const isNumeric : any = require('isnumeric');
@@ -19,11 +19,6 @@ export class DatabaseUtil
 		return '[' + n.replace(/[\s|'|"|\(|\)|\[|\]]/g, '') + ']';
 	}
 	
-	//Helper function to retrieve a column from a 2D array
-	private static extractColumn(arr : any[], colIndex : number) {
-		return arr.map((elem) => { return elem[colIndex]; });
-	}
-	
 	//Helper function to filter an array to remove empty values
 	private static filterEmptyValues(arr : any[]) {
 		return arr.filter((elem) => { return (elem !== undefined && elem !== null && (elem.length === undefined || elem.length > 0)); });
@@ -31,7 +26,14 @@ export class DatabaseUtil
 	
 	//Helper function to retrieve 10 non-empty samples from the specified column of a 2D array
 	private static extractSamples(arr : any[], colIndex : number, offset : number) {
-		return DatabaseUtil.filterEmptyValues(DatabaseUtil.extractColumn(arr.slice(offset,offset+10), colIndex));
+		return DatabaseUtil.filterEmptyValues(DataUtils.extractColumn(arr.slice(offset,offset+10), colIndex));
+	}
+	
+	//Helper function to convert query output to a format suitable for writing to a CSV file
+	public static reshapeForCsv(rows : any[]) : any[][]
+	{
+		let fields = ((rows.length == 0) ? [] : Object.keys(rows[0]));
+		return [fields].concat(rows.map((row) => { return (<any>Object).values(row); }));
 	}
 	
 	//Renames fields from a 2D array where the first row contains the field names
@@ -195,6 +197,26 @@ export class DatabaseUtil
 		}
 	}
 	
+	//Retrieves the mapping from field name to datatype for the specified table
+	public static async getFieldTypes(db : sqlite3.Database, tableName : string)
+	{
+		try
+		{
+			let rows = await DatabaseUtil.all(db, 'PRAGMA table_info(' + DatabaseUtil.sanitiseName(tableName) + ');', []);
+			let mapping = new Map<string,string>();
+			for (let row of rows) {
+				mapping.set(row['name'], row['type']);
+			}
+			
+			return mapping;
+		}
+		catch (err)
+		{
+			//Propagate any errors
+			throw err;
+		}
+	}
+	
 	//Inserts large numbers of rows into a table in batches to improve performance
 	public static async batchInsert(db : sqlite3.Database, table : string, rows : any[])
 	{
@@ -339,8 +361,7 @@ export class DatabaseUtil
 			
 			//Perform the query
 			let rows = await DatabaseUtil.all(db, query, paramsUnpacked);
-			let fields = ((rows.length == 0) ? [] : Object.keys(rows[0]));
-			let data = [fields].concat(rows.map((row) => { return (<any>Object).values(row); }));
+			let data = DatabaseUtil.reshapeForCsv(rows);
 			
 			//Write the data to the CSV file
 			await CsvDataUtil.writeCsv(csvFile, data);

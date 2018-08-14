@@ -302,7 +302,18 @@ export class DatasetBuilder
 					if (index == 0) { return false; }
 					let station = Number.parseInt(row[stationColumn]);
 					let year = Number.parseInt(row[yearColumn]);
-					return (stations.indexOf(station) != -1 && year >= startYear && year <= endYear);
+					
+					//Determine if we are filtering by station
+					if (stations.length > 0 && stations.indexOf(station) == -1) {
+						return false;
+					}
+					
+					//Determine if we are filtering by year
+					if (startYear != DataRequest.AllYears && endYear != DataRequest.AllYears && (year < startYear || year > endYear)) {
+						return false;
+					}
+					
+					return true;
 				});
 				
 				//Insert the filtered data into the database table

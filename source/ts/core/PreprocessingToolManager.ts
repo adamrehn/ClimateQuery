@@ -1,4 +1,5 @@
 import { PreprocessingTool } from './PreprocessingTool';
+import { AggregateDataDirectoryTool } from './tools/AggregateDataDirectoryTool';
 import { MergeDataDirectoriesTool } from './tools/MergeDataDirectoriesTool';
 
 export class PreprocessingToolManager
@@ -9,6 +10,7 @@ export class PreprocessingToolManager
 	{
 		this.tools = [
 			
+			new AggregateDataDirectoryTool(),
 			new MergeDataDirectoriesTool()
 			
 		];

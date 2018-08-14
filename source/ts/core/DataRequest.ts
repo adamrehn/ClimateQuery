@@ -5,6 +5,12 @@ const isNumeric : any = require('isnumeric');
 
 export class DataRequest
 {
+	//Sentinel value for specifying that we want to include data from all weather stations
+	public static AllStations : number[] = [];
+	
+	//Sentinel value for specifying that we want to include data from all years
+	public static AllYears = -1;
+	
 	public stations : number[];
 	public datatypeCodes : DatatypeCode[];
 	public datatypeDirs : Map<DatatypeCode, string>;

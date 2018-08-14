@@ -1,13 +1,24 @@
+import { ApplicationController } from './ApplicationController';
+
 export abstract class PreprocessingTool
 {
+	//Our parameter values
 	public parameters : Map<string,Object>;
+	
+	//Our parameter datatypes
 	public parameterTypes : Map<string,string>;
+	
+	//The list of options for selection-based parameters such as dropdown lists
+	public parameterOptions : Map<string,string[]>;
+	
+	//Our parameter mutation hooks
 	protected parameterHooks : Map<string,()=>void>;
 	
 	constructor()
 	{
 		this.parameters = new Map<string,Object>();
 		this.parameterTypes = new Map<string,string>();
+		this.parameterOptions = new Map<string,string[]>();
 		this.parameterHooks = new Map<string,()=>void>();
 	}
 	
@@ -16,6 +27,7 @@ export abstract class PreprocessingTool
 	{
 		cloned.parameters = new Map<string,Object>(this.parameters);
 		cloned.parameterTypes = new Map<string,string>(this.parameterTypes);
+		cloned.parameterOptions = new Map<string,string[]>(this.parameterOptions);
 	}
 	
 	//Clones this object
@@ -44,5 +56,5 @@ export abstract class PreprocessingTool
 	}
 	
 	//Runs the tool using the previously set parameter values
-	public abstract async execute(progressCallback : (percentage : number)=>void) : Promise<void>;
+	public abstract async execute(controller : ApplicationController, progressCallback : (percentage : number)=>void) : Promise<void>;
 }

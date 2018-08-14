@@ -1,9 +1,9 @@
-import { ApplicationController } from '../core/ApplicationController'
-import { UIStateTransitionHandler } from './UIStateTransitionHandler'
+import { ApplicationController } from '../core/ApplicationController';
+import { UIStateTransitionHandler } from './UIStateTransitionHandler';
 import { UILoadingIconProvider } from './UILoadingIconProvider';
-import { UIOverlayProvider } from './UIOverlayProvider'
-import { UIDialogProvider } from './UIDialogProvider'
-import { UIErrorHandler } from './UIErrorHandler'
+import { UIOverlayProvider } from './UIOverlayProvider';
+import { UIDialogProvider } from './UIDialogProvider';
+import { UIErrorHandler } from './UIErrorHandler';
 import * as $ from 'jquery';
 
 export class UIState

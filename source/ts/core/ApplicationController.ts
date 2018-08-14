@@ -66,6 +66,11 @@ export class ApplicationController
 		return this.datasetManager.createDataset(name, request, progressCallback);
 	}
 	
+	//Creates a temporary (in-memory) dataset
+	public createTemporaryDataset(request : DataRequest, progressCallback : (...args: any[]) => void) {
+		return this.datasetManager.createTemporaryDataset(request, progressCallback);
+	}
+	
 	//Validates a data request
 	public validateRequest(request : DataRequest) {
 		return RequestValidator.validateRequest(request);

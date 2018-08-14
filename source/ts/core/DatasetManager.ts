@@ -172,6 +172,23 @@ export class DatasetManager
 		}
 	}
 	
+	//Attempts to create a temporary (in-memory) dataset
+	public async createTemporaryDataset(request : DataRequest, progressCallback : (...args: any[]) => void)
+	{
+		try
+		{
+			//Attempt to create the dataset
+			let builder = new DatasetBuilder();
+			builder.on('progress', progressCallback);
+			return await builder.buildDataset(':memory:', request);
+		}
+		catch (err)
+		{
+			//Propagate any errors
+			throw err;
+		}
+	}
+	
 	//Attempts to create a new dataset and add it to the index
 	public async createDataset(datasetName : string, request : DataRequest, progressCallback : (...args: any[]) => void)
 	{

@@ -1,7 +1,10 @@
+import { DataUtils } from './DataUtils';
 import * as csv_stringify from 'csv-stringify';
 import * as csv_parse from 'csv-parse';
 import * as fs from 'fs';
 import * as mathjs from 'mathjs';
+import * as $ from 'jquery';
+import * as pad from 'pad';
 
 //Wrap fs.readFile() and fs.writeFile() in a Promise-based interface
 require('util.promisify/shim')();
@@ -107,7 +110,7 @@ export class CsvDataUtil
 	}
 	
 	//Writes data to a CSV file
-	public static writeCsv(csvFile : string, data : string[][]) : Promise<boolean>
+	public static writeCsv(csvFile : string, data : any[][]) : Promise<boolean>
 	{
 		return new Promise((resolve : Function, reject : Function) =>
 		{
@@ -129,6 +132,45 @@ export class CsvDataUtil
 				}
 			});
 		});
+	}
+	
+	//Writes data to a CSV file in the hybrid fixed-width CSV format that BOM supplies data in
+	public static async writeBOMCsv(csvFile : string, data : any[][])
+	{
+		try
+		{
+			//Stringify the data, formatting floating-point values with two decimal places
+			let headerRow = data.slice(0, 1);
+			let stringified : string[][] = data.slice(1).map((row : any[]) => {
+				return row.map((field : any) => {
+					return (($.type(field) == 'number' && Number.isInteger(field) === false) ? (<number>field).toFixed(2) : field.toString());
+				});
+			});
+			
+			//Determine the maximum width for each column
+			let columnWidths : number[] = [];
+			for (let col = 0; col < stringified[0].length; ++col)
+			{
+				let columnValues = DataUtils.extractColumn(stringified, col);
+				columnWidths[col] = mathjs.max(columnValues.map((field : string) => { return field.length; })); 
+			}
+			
+			//Pad all of the columns to their maximum width
+			let padded = stringified.map((row : string[]) =>
+			{
+				return row.map((field : string, col : number) => {
+					return pad(field, columnWidths[col]);
+				});
+			});
+			
+			//Write the padded data to file
+			await CsvDataUtil.writeCsv(csvFile, headerRow.concat(padded));
+		}
+		catch (err)
+		{
+			//Propagate any errors
+			throw err;
+		}
 	}
 	
 	//Concatenates multiple station list CSV files, using the specified notes file to construct the common header

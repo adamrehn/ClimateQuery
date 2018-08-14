@@ -24,6 +24,24 @@ export class DatasetGranularityHelper
 		];
 	}
 	
+	//Determines if the first supplied granularity is coarser than the second supplied granularity
+	public static isCoarser(lhs : DatasetGranularity, rhs : DatasetGranularity) {
+		return (lhs != DatasetGranularity.Unknown && lhs < rhs);
+	}
+	
+	//Determines if the first supplied granularity is finer than the second supplied granularity
+	public static isFiner(lhs : DatasetGranularity, rhs : DatasetGranularity) {
+		return (lhs != DatasetGranularity.Unknown && lhs > rhs);
+	}
+	
+	public static validGranularities() : DatasetGranularity[]
+	{
+		let mappings = new Map<DatasetGranularity, string>(DatasetGranularityHelper.stringMappings());
+		return [...mappings.keys()].filter((granularity : number) => {
+			return granularity != DatasetGranularity.Unknown;
+		});
+	}
+	
 	public static toString(granularity : DatasetGranularity) : string
 	{
 		//Build a map from granularity enum value to string representation and retrieve the correct value

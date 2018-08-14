@@ -1,6 +1,6 @@
-import { UISectionProgressManager } from '../UISectionProgressManager'
-import { UIState } from '../UIState'
-import { DatasetListState } from './DatasetListState'
+import { UIState } from '../UIState';
+import { UISectionProgressManager } from '../UISectionProgressManager';
+import { DatasetListState } from './DatasetListState';
 import { PreprocessingTool } from '../../core/PreprocessingTool';
 import * as $ from 'jquery';
 
@@ -148,6 +148,28 @@ export class PreprocessingToolFormState extends UIState
 					});
 				});
 			}
+			else if (fieldType == 'select')
+			{
+				//Dropdown list
+				
+				//Create the <select> element
+				let dropdown = $(document.createElement('select'));
+				this.formFields.set(paramName, dropdown);
+				wrapper.append(dropdown);
+				
+				//Create an <option> element for each valid value
+				let options = this.tool.parameterOptions.get(paramName);
+				if (options !== undefined)
+				{
+					for (let option of options)
+					{
+						let item = $(document.createElement('option'));
+						item.attr('value', option);
+						item.text(option);
+						dropdown.append(item);
+					}
+				}
+			}
 			else
 			{
 				//Standard <input> type (e.g. text, number, etc.)
@@ -271,7 +293,7 @@ export class PreprocessingToolFormState extends UIState
 		{
 			//Attempt to run the query and export the result
 			this.updateProgress(0);
-			this.tool.execute(this.updateProgress.bind(this)).then(() =>
+			this.tool.execute(this.controller, this.updateProgress.bind(this)).then(() =>
 			{
 				this.overlayProvider.hideOverlay();
 				this.dialogProvider.showMessage(`Successfully ran the "${this.tool.name()}" data preprocessing tool.`);
