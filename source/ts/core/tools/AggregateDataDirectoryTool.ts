@@ -25,7 +25,7 @@ export class AggregateDataDirectoryTool extends PreprocessingTool
 	private static QualityThreshold = 75.0;
 	
 	//The number of rows we write to each output data file
-	private static RowsPerFile = 2000;
+	private static RowsPerFile = 4000;
 	
 	constructor()
 	{
