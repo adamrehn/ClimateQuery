@@ -98,7 +98,7 @@ export class ValidationReportGenerator
 		let report = $(document.createElement('div'));
 		
 		//Append the top-level heading
-		report.append($(document.createElement('h1')).text('Dataset Data Presence Report'));
+		report.append($(document.createElement('h1')).text('Dataset Data Quality Report'));
 		
 		//Append the basic request details
 		report.append($(document.createElement('h2')).text('Request Details'));
@@ -126,7 +126,7 @@ export class ValidationReportGenerator
 		report.append(stationsList);
 		
 		//Build the table containing the data presence results
-		report.append($(document.createElement('h2')).text('Data Presence Percentages'));
+		report.append($(document.createElement('h2')).text('Data Quality Percentages'));
 		let numYears = (request.endYear - request.startYear) + 1;
 		let years = (new Array(numYears)).fill(0).map((v : any, index : number) => { return request.startYear + index; });
 		let presenceTable = $(document.createElement('table')).addClass('presence-table');

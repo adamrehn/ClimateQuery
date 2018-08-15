@@ -124,11 +124,11 @@ export class DatasetListState extends UIState
 			let datasetDatatypes = $(document.createElement('span')).addClass('datatypes');
 			let datatypes = this.formatList(dataset.request.datatypeCodes.map(DatatypeCodeHelper.toString));
 			datasetDatatypes.text(DatasetGranularityHelper.toString(dataset.granularity) + ' ' + datatypes + ' from ' + dataset.request.startYear + ' to ' + dataset.request.endYear);
-			let datasetPresent = $(document.createElement('span')).addClass('present').text(numeral(dataset.present).format('00.00') + '% data present');
+			let datasetPresent = $(document.createElement('span')).addClass('present').text(numeral(dataset.present).format('00.00') + '% data quality controlled and acceptable');
 			if (dataset.present < 75.0)
 			{
 				datasetPresent.addClass('validation-warning');
-				datasetPresent.attr('title', 'Warning: less than 75% of data has values present');
+				datasetPresent.attr('title', 'Warning: less than 75% of data is quality controlled and acceptable');
 				datasetPresent.html('<span class="warning-icon">&#x26A0;</span>' + datasetPresent.html());
 			}
 			else {
@@ -136,14 +136,14 @@ export class DatasetListState extends UIState
 			}
 			
 			//Create the UI controls for the dataset actions
-			let presenceReport = $(document.createElement('button')).addClass('blue').text('Data Presence Report');
+			let presenceReport = $(document.createElement('button')).addClass('blue').text('Data Quality Report');
 			let queryDataset = $(document.createElement('button')).addClass('blue').text('Query');
 			let exportDataset = $(document.createElement('button')).addClass('blue').text('Export');
 			let deleteDataset = $(document.createElement('button')).addClass('blue').text('Delete');
 			
 			//Wire up the events for the dataset actions
 			
-			//"Data Presence Report" button
+			//"Data Quality Report" button
 			presenceReport.click(() => {
 				this.stateTransition.setState(PresenceReportState.identifier(), {'dataset': dataset, 'index': datasetIndex});
 			});

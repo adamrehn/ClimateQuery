@@ -18,7 +18,7 @@ export class PresenceReportState extends ReportDisplayBase
 	
 	//Specifies the title that should be shown in the application's title bar while the state is visible
 	public getTitle() {
-		return 'Dataset Data Presence Report';
+		return 'Dataset Data Quality Report';
 	}
 	
 	protected getIdentifier() : string {
@@ -27,7 +27,7 @@ export class PresenceReportState extends ReportDisplayBase
 	
 	//Returns the report title
 	protected getReportTitle() : string {
-		return 'Dataset Data Presence Report';
+		return 'Dataset Data Quality Report';
 	}
 	
 	public onShow(...args: any[]) : void
