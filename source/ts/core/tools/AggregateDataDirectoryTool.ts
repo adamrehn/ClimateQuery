@@ -21,6 +21,12 @@ const copyFile = promisify(fs.copyFile);
 
 export class AggregateDataDirectoryTool extends PreprocessingTool
 {
+	//The threshold (in percentage of 'Y' values) for considering an aggregated row to have a 'Y' quality value
+	private static QualityThreshold = 75.0;
+	
+	//The number of rows we write to each output data file
+	private static RowsPerFile = 2000;
+	
 	constructor()
 	{
 		super();
@@ -200,7 +206,7 @@ export class AggregateDataDirectoryTool extends PreprocessingTool
 					let percentage = numPresent / total;
 					
 					//If the number of validated values is above our threshold, report 'Y' as our overall quality value
-					processed[field] = ((percentage > 75.0) ? 'Y' : 'N');
+					processed[field] = ((percentage > AggregateDataDirectoryTool.QualityThreshold) ? 'Y' : 'N');
 					
 					//Remove the intermediate fields
 					delete processed[`Values${field}`];
@@ -213,13 +219,12 @@ export class AggregateDataDirectoryTool extends PreprocessingTool
 			//The aggregation query and post-processing are treated as 10% of our overall progress
 			progressCallback(90.0);
 			
-			//Write the aggregated data to the output directory, splitting it into 1000 rows per file
-			let batchSize = 1000;
+			//Write the aggregated data to the output directory, splitting it into our predetermined number of rows per file
 			let batchNum = 0;
-			for (let startRow = 0; startRow < aggregated.length; startRow += batchSize)
+			for (let startRow = 0; startRow < aggregated.length; startRow += AggregateDataDirectoryTool.RowsPerFile)
 			{
 				//Extract the rows for the current file
-				let endRow = Math.min(startRow + batchSize, aggregated.length);
+				let endRow = Math.min(startRow + AggregateDataDirectoryTool.RowsPerFile, aggregated.length);
 				let batch = aggregated.slice(startRow, endRow);
 				
 				//Write the file to the output directory
