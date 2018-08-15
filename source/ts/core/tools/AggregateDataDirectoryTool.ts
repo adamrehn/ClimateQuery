@@ -179,53 +179,58 @@ export class AggregateDataDirectoryTool extends PreprocessingTool
 				return [`GROUP_CONCAT(${field}) AS Values${field}, COUNT(*) AS Count${field}`];
 			});
 			
-			//Prepare the aggregation query
-			let selectClause = `SELECT ${targetGranularityFields.join(',')}, ${expandedAggregates.join(',')}, ${expandedQualities.join(',')} FROM dataset`;
+			//Prepare the aggregation query (note that the fields we are grouping by will be prepended automatically by the Query class)
+			let selectClause = `SELECT ${expandedAggregates.join(',')}, ${expandedQualities.join(',')} FROM dataset`;
 			let query = new Query('', selectClause, [], new Map<string,object>(), new Map<string,string>(), [], inputGranularity);
 			query.applyAggregation(targetGranularityFields);
 			
-			//Execute the query and perform post-processing the aggregation results
-			let aggregated = (await DatabaseUtil.all(db, query.generateSQL())).map((row : any, index : number) =>
-			{
-				//Replace any NULL values with zeroes
-				let processed = row;
-				for (let field of Object.keys(row))
-				{
-					if (row[field] === undefined || row[field] === null || row[field] == '') {
-						processed[field] = 0.0;
-					}
-				}
-				
-				//Convert the concatenated quality value list for each data field into a into single quality value
-				for (let field of qualityFields)
-				{
-					//Determine how many 'Y' quality values are present
-					let valueList : string = row[`Values${field}`].toString();
-					let numPresent = valueList.split(',').filter((q : string) => { return (q == 'Y'); }).length;
-					let total = <number>(row[`Count${field}`]);
-					let percentage = numPresent / total;
-					
-					//If the number of validated values is above our threshold, report 'Y' as our overall quality value
-					processed[field] = ((percentage > AggregateDataDirectoryTool.QualityThreshold) ? 'Y' : 'N');
-					
-					//Remove the intermediate fields
-					delete processed[`Values${field}`];
-					delete processed[`Count${field}`];
-				}
-				
-				return processed;
-			});
+			//Execute the query, storing the aggregated result data in an intermediate table
+			await DatabaseUtil.run(db, `CREATE TABLE aggregated AS ${query.generateSQL()};`);
 			
-			//The aggregation query and post-processing are treated as 10% of our overall progress
+			//The aggregation query is treated as 10% of our overall progress
 			progressCallback(90.0);
 			
-			//Write the aggregated data to the output directory, splitting it into our predetermined number of rows per file
+			//Determine how many rows are in the aggregated table
+			let totalRows = <number>((await DatabaseUtil.get(db, 'SELECT COUNT(*) AS count FROM aggregated;'))['count']);
+			
+			//Retrieve the column names from the aggregated table
+			let allColumns = Object.keys(await DatabaseUtil.get(db, 'SELECT * FROM aggregated LIMIT 1;'));
+			
+			//Post-process the aggregated data in batches and write it to the output directory
 			let batchNum = 0;
-			for (let startRow = 0; startRow < aggregated.length; startRow += AggregateDataDirectoryTool.RowsPerFile)
+			for (let startRow = 0; startRow < totalRows; startRow += AggregateDataDirectoryTool.RowsPerFile)
 			{
-				//Extract the rows for the current file
-				let endRow = Math.min(startRow + AggregateDataDirectoryTool.RowsPerFile, aggregated.length);
-				let batch = aggregated.slice(startRow, endRow);
+				//Retrieve the rows for the current file
+				let batch = (await DatabaseUtil.all(db, `SELECT * FROM aggregated LIMIT ${AggregateDataDirectoryTool.RowsPerFile} OFFSET ${startRow};`)).map((row : any) =>
+				{
+					//Replace any NULL values with zeroes
+					let processed = row;
+					for (let field of Object.keys(row))
+					{
+						if (row[field] === undefined || row[field] === null || row[field] == '') {
+							processed[field] = 0.0;
+						}
+					}
+					
+					//Convert the concatenated quality value list for each data field into a into single quality value
+					for (let field of qualityFields)
+					{
+						//Determine how many 'Y' quality values are present
+						let valueList : string = row[`Values${field}`].toString();
+						let numPresent = valueList.split(',').filter((q : string) => { return (q == 'Y'); }).length;
+						let total = <number>(row[`Count${field}`]);
+						let percentage = numPresent / total;
+						
+						//If the number of validated values is above our threshold, report 'Y' as our overall quality value
+						processed[field] = ((percentage > AggregateDataDirectoryTool.QualityThreshold) ? 'Y' : 'N');
+						
+						//Remove the intermediate fields
+						delete processed[`Values${field}`];
+						delete processed[`Count${field}`];
+					}
+					
+					return processed;
+				});
 				
 				//Write the file to the output directory
 				await CsvDataUtil.writeBOMCsv(path.join(outputDir, `Aggregated_Data_${batchNum}.txt`), DatabaseUtil.reshapeForCsv(batch));
@@ -250,7 +255,7 @@ export class AggregateDataDirectoryTool extends PreprocessingTool
 			if (dataDetailsMatch !== null)
 			{
 				//Create a new column list for the aggregated columns
-				let newColumns = Object.keys(aggregated[0]).map((column : string) => {
+				let newColumns = allColumns.map((column : string) => {
 					return `0, 0, ${column}`;
 				})
 				.join('\n');

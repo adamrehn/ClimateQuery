@@ -180,7 +180,7 @@ export class DatasetManager
 			//Attempt to create the dataset
 			let builder = new DatasetBuilder();
 			builder.on('progress', progressCallback);
-			return await builder.buildDataset(':memory:', request);
+			return await builder.buildDataset('', request);
 		}
 		catch (err)
 		{
