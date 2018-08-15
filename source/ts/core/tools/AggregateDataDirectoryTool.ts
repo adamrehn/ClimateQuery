@@ -12,9 +12,11 @@ import * as Immutable from 'immutable';
 import * as path from 'path';
 import * as fs from 'fs';
 
-//Wrap fs.copyFile() in a Promise-based interface
+//Wrap fs.readFile(), fs.writeFile() and fs.copyFile() in a Promise-based interface
 require('util.promisify/shim')();
 import { promisify } from 'util';
+const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
 const copyFile = promisify(fs.copyFile);
 
 export class AggregateDataDirectoryTool extends PreprocessingTool
@@ -208,6 +210,9 @@ export class AggregateDataDirectoryTool extends PreprocessingTool
 				return processed;
 			});
 			
+			//The aggregation query and post-processing are treated as 10% of our overall progress
+			progressCallback(90.0);
+			
 			//Write the aggregated data to the output directory, splitting it into 1000 rows per file
 			let batchSize = 1000;
 			let batchNum = 0;
@@ -229,9 +234,34 @@ export class AggregateDataDirectoryTool extends PreprocessingTool
 			let stationList = await DatasetBuilder.getCodeStationList(inputDir);
 			await copyFile(stationList, path.join(outputDir, path.basename(stationList)));
 			
-			//Copy notes file from the input directory to the output directory
+			//Read the contents of the notes file from the input directory
 			let notesFile = await DatasetBuilder.getCodeNotes(inputDir);
-			await copyFile(notesFile, path.join(outputDir, path.basename(notesFile)));
+			let notesData = (await readFile(notesFile, {encoding: 'utf-8'})).replace(/\r\n/g, '\n');
+			
+			//Isolate the section of the notes that lists the datafile column names
+			//(Note that we use "[^]" to match all characters including newlines, since JS does not have a dotall flag)
+			let dataDetailsRegex = new RegExp('\nDATA FILE DETAILS\n_+?\n[^]+?\n_', 'mi');
+			let dataDetailsMatch = dataDetailsRegex.exec(notesData);
+			if (dataDetailsMatch !== null)
+			{
+				//Create a new column list for the aggregated columns
+				let newColumns = Object.keys(aggregated[0]).map((column : string) => {
+					return `0, 0, ${column}`;
+				})
+				.join('\n');
+				
+				//Remove the existing column list and replace it with our new column list
+				let isolatedSection = dataDetailsMatch[0];
+				let columnRegex = new RegExp('[0-9\\- ]+,[0-9 ]+,[^\n]+\n', 'g');
+				let replaced = isolatedSection.replace(columnRegex, '\n').replace(/-\n{3,}/, '-\n\n' + newColumns + '\n\n\n');
+				notesData = notesData.replace(isolatedSection, replaced);
+			}
+			
+			//Write the modified notes data to the output directory
+			await writeFile(path.join(outputDir, path.basename(notesFile)), notesData, {encoding: 'utf-8'});
+			
+			//If we have reached this point then our processing has completed successfully
+			progressCallback(100.0);
 		}
 		catch (err)
 		{
