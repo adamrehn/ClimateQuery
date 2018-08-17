@@ -3,7 +3,7 @@
 	"description": "ClimateQuery Weather Data Processing Tool",
 	"homepage": "https://github.com/adamrehn/ClimateQuery",
 	"main": "source/js/main.js",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"files": [
 		"source/js",
 		"source/css",
