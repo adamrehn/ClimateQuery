@@ -186,6 +186,275 @@ export class QueryManager
 				]),
 				[ DatatypeCode.SolarExposure ],
 				DatasetGranularity.Day
+			),
+			
+			
+			//Humidity queries
+			
+			new Query(
+				'Average maximum daily humidity',
+				'SELECT AVG(MaxHumidity) as AverageMaxHumidity FROM dataset',
+				[ 'MaxHumidity != ""' ],
+				new Map<string,Object>(),
+				new Map<string,string>(),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Average minimum daily humidity',
+				'SELECT AVG(MinHumidity) as AverageMinHumidity FROM dataset',
+				[ 'MinHumidity != ""' ],
+				new Map<string,Object>(),
+				new Map<string,string>(),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with maximum humidity above threshold',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'MaxHumidity != ""',
+					'MaxHumidity > $threshold'
+				],
+				new Map<string,Object>([[ '$threshold', 0.0 ]]),
+				new Map<string,string>([[ '$threshold', 'number' ]]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with minimum humidity below threshold',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'MinHumidity != ""',
+					'MinHumidity < $threshold'
+				],
+				new Map<string,Object>([[ '$threshold', 0.0 ]]),
+				new Map<string,string>([[ '$threshold', 'number' ]]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with humidity within range',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'MinHumidity != ""',
+					'MaxHumidity != ""',
+					'MinHumidity > $lowerBound',
+					'MaxHumidity < $upperBound'
+				],
+				new Map<string,Object>([
+					['$lowerBound', 0.0],
+					['$upperBound', 0.0]
+				]),
+				new Map<string,string>([
+					['$lowerBound', 'number'],
+					['$upperBound', 'number']
+				]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with average humidity above threshold',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'AverageHumidity != ""',
+					'AverageHumidity > $threshold'
+				],
+				new Map<string,Object>([[ '$threshold', 0.0 ]]),
+				new Map<string,string>([[ '$threshold', 'number' ]]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with average humidity below threshold',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'AverageHumidity != ""',
+					'AverageHumidity < $threshold'
+				],
+				new Map<string,Object>([[ '$threshold', 0.0 ]]),
+				new Map<string,string>([[ '$threshold', 'number' ]]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with average humidity within range',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'AverageHumidity != ""',
+					'AverageHumidity > $lowerBound',
+					'AverageHumidity < $upperBound'
+				],
+				new Map<string,Object>([
+					['$lowerBound', 0.0],
+					['$upperBound', 0.0]
+				]),
+				new Map<string,string>([
+					['$lowerBound', 'number'],
+					['$upperBound', 'number']
+				]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			
+			//Dew point queries
+			
+			new Query(
+				'Average maximum daily dew point',
+				'SELECT AVG(MaxDewPoint) as AverageMaxDewPoint FROM dataset',
+				[ 'MaxDewPoint != ""' ],
+				new Map<string,Object>(),
+				new Map<string,string>(),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Average minimum daily dew point',
+				'SELECT AVG(MinDewPoint) as AverageMinDewPoint FROM dataset',
+				[ 'MinDewPoint != ""' ],
+				new Map<string,Object>(),
+				new Map<string,string>(),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with maximum dew point above threshold',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'MaxDewPoint != ""',
+					'MaxDewPoint > $threshold'
+				],
+				new Map<string,Object>([[ '$threshold', 0.0 ]]),
+				new Map<string,string>([[ '$threshold', 'number' ]]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with minimum dew point below threshold',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'MinDewPoint != ""',
+					'MinDewPoint < $threshold'
+				],
+				new Map<string,Object>([[ '$threshold', 0.0 ]]),
+				new Map<string,string>([[ '$threshold', 'number' ]]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with dew point within range',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'MinDewPoint != ""',
+					'MaxDewPoint != ""',
+					'MinDewPoint > $lowerBound',
+					'MaxDewPoint < $upperBound'
+				],
+				new Map<string,Object>([
+					['$lowerBound', 0.0],
+					['$upperBound', 0.0]
+				]),
+				new Map<string,string>([
+					['$lowerBound', 'number'],
+					['$upperBound', 'number']
+				]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			
+			//Wind speed queries
+			
+			new Query(
+				'Average maximum daily wind speed',
+				'SELECT AVG(MaxWindSpeed) as AverageMaxWindSpeed FROM dataset',
+				[ 'MaxWindSpeed != ""' ],
+				new Map<string,Object>(),
+				new Map<string,string>(),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Average minimum daily wind speed',
+				'SELECT AVG(MinWindSpeed) as AverageMinWindSpeed FROM dataset',
+				[ 'MinWindSpeed != ""' ],
+				new Map<string,Object>(),
+				new Map<string,string>(),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with maximum wind speed above threshold',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'MaxWindSpeed != ""',
+					'MaxWindSpeed > $threshold'
+				],
+				new Map<string,Object>([[ '$threshold', 0.0 ]]),
+				new Map<string,string>([[ '$threshold', 'number' ]]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with minimum wind speed below threshold',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'MinWindSpeed != ""',
+					'MinWindSpeed < $threshold'
+				],
+				new Map<string,Object>([[ '$threshold', 0.0 ]]),
+				new Map<string,string>([[ '$threshold', 'number' ]]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with wind speed within range',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'MinWindSpeed != ""',
+					'MaxWindSpeed != ""',
+					'MinWindSpeed > $lowerBound',
+					'MaxWindSpeed < $upperBound'
+				],
+				new Map<string,Object>([
+					['$lowerBound', 0.0],
+					['$upperBound', 0.0]
+				]),
+				new Map<string,string>([
+					['$lowerBound', 'number'],
+					['$upperBound', 'number']
+				]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
+			),
+			
+			new Query(
+				'Number of days with maximum wind gust above threshold',
+				'SELECT COUNT(*) as NumDays FROM dataset',
+				[
+					'MaxWindGust != ""',
+					'MaxWindGust > $threshold'
+				],
+				new Map<string,Object>([[ '$threshold', 0.0 ]]),
+				new Map<string,string>([[ '$threshold', 'number' ]]),
+				[ DatatypeCode.WindDewHumidityAirTemp ],
+				DatasetGranularity.Day
 			)
 			
 		];
