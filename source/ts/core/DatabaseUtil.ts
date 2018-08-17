@@ -1,4 +1,4 @@
-import { CsvDataUtil } from './CsvDataUtil';
+import { CsvFileWriter } from './CsvFileWriter';
 import { DataUtils } from './DataUtils';
 import * as sqlite3 from 'sqlite3';
 
@@ -355,16 +355,40 @@ export class DatabaseUtil
 	{
 		try
 		{
-			//Unpack the params Map to a plain key-value pair object to pass to sqlite
+			//Create our CSV file writer
+			let writer = await CsvFileWriter.createWriter(csvFile);
+			
+			//Unpack the params Map to a plain key-value pair object to pass to SQLite
 			let paramsUnpacked : any = {};
 			params.forEach((value : Object, key : string) => { paramsUnpacked[key] = value; });
 			
-			//Perform the query
-			let rows = await DatabaseUtil.all(db, query, paramsUnpacked);
-			let data = DatabaseUtil.reshapeForCsv(rows);
+			//Determine how many rows will be returned by the query
+			//(Note that this will only function correctly for simple queries that only feature one FROM clause)
+			let countQuery = query.replace(/SELECT .+ FROM/i, 'SELECT COUNT(*) AS total FROM');
+			let totalRows = (await DatabaseUtil.get(db, countQuery, paramsUnpacked))['total'];
 			
-			//Write the data to the CSV file
-			await CsvDataUtil.writeCsv(csvFile, data);
+			//Strip any trailing semicolon from the query string so we can append our offset and limit clauses
+			query = query.trim();
+			query = (query.endsWith(';') ? query.substr(0, query.length-1) : query);
+			
+			//Process the data in batches
+			const batchSize = 50000;
+			for (let offset = 0; offset < totalRows; offset += batchSize)
+			{
+				//Retrieve the results for the current batch
+				let batch = await DatabaseUtil.all(db, query + ` LIMIT ${batchSize} OFFSET ${offset};`, paramsUnpacked);
+				
+				//Only include the header row in the first batch
+				let data = DatabaseUtil.reshapeForCsv(batch);
+				if (offset > 0) {
+					data = data.slice(1);
+				}
+				
+				//Write the current batch of rows to the CSV file
+				await writer.write(data);
+			}
+			
+			await writer.close();
 			return true;
 		}
 		catch (err)
